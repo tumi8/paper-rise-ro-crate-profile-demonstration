@@ -1,0 +1,5 @@
+{
+  "tc": "rate 1mbit",
+  "kem_alg": "X25519",
+  "sig_alg": "rsa:2048"
+}

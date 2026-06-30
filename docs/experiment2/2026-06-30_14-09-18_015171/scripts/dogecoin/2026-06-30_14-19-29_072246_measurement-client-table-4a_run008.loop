@@ -1,0 +1,5 @@
+{
+  "tc": "loss 0%",
+  "kem_alg": "p256_kyber512",
+  "sig_alg": "rsa:2048"
+}

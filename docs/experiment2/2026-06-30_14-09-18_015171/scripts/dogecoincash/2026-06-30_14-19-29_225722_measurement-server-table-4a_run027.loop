@@ -1,0 +1,5 @@
+{
+  "tc": "loss 10%",
+  "kem_alg": "kyber90s512",
+  "sig_alg": "rsa:2048"
+}

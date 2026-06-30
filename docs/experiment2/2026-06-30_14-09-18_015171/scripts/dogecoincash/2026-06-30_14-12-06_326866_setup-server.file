@@ -1,0 +1,22 @@
+#!/bin/bash
+set -e
+
+export DEBIAN_FRONTEND=noninteractive
+
+apt-get update
+apt-get upgrade -y
+
+mkdir -p /opt
+
+PORT=$(pos_get_variable port)
+IP=$(pos_get_variable --from-global ip/server)
+
+# Set interfaces and links up for sending traffic
+ip link add link "$PORT" name macvtap0 type macvtap
+ip link set dev macvtap0 up
+ip link set dev "$PORT" up
+ip address add "$IP"/24 dev macvtap0
+
+chmod 600 /root/.ssh/cert-sync-key
+
+echo "Server base setup finished ($(date))"

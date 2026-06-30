@@ -1,0 +1,1 @@
+['bash', '-c', "taskset -c 1 /opt/openssl/bin/openssl s_time -curves kyber1024 -connect 10.0.0.2:4433 -new -time 15 -verify 1 -www '/' -CAfile /opt/openssl/CA.crt"]

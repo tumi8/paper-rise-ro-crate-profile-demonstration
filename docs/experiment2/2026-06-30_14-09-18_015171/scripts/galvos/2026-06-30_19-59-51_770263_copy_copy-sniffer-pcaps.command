@@ -1,0 +1,1 @@
+scp -r /srv/testbed/results/erhauser/default/2026-06-30_14-09-18_015171/files/dogecoingold/ galvos.blockchain.net.cit.tum.de:/root/sniffer-raw/pcaps

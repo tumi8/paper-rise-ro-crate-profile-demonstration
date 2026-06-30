@@ -1,0 +1,82 @@
+building [1mtable-4a-kem.pdf[0m from table-4a-kem.tex
+[1m[pdflatex][0m table-4a-kem.pdf from table-4a-kem.tex
+[1m[pdflatex][0m table-4a-kem.pdf from table-4a-kem.tex
+[1m[pdflatex][0m table-4a-kem.pdf from table-4a-kem.tex
+Extracting log for [1;35mtable-4a-kem.pdf[0m from [1;32mbuild/table-4a-kem.tex/table-4a-kem/table-4a-kem.log[0m
+(Font)              scaled to size 5.5pt on input line 31.
+
+Class acmart Warning: \vspace should only be used to provide space above/below surrounding objects on input line 138.
+
+LaTeX Font Info:    Trying to load font information for T1+zi4 on input line 138.
+(/usr/share/texlive/texmf-dist/tex/latex/inconsolata/t1zi4.fd
+--
+(Font)              scaled to size 6.0pt on input line 138.
+
+Class acmart Warning: \vspace should only be used to provide space above/below surrounding objects on input line 138.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below surrounding objects on input line 138.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below surrounding objects on input line 138.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below surrounding objects on input line 138.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below surrounding objects on input line 138.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below surrounding objects on input line 138.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below surrounding objects on input line 138.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below surrounding objects on input line 138.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below surrounding objects on input line 242.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below surrounding objects on input line 242.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below surrounding objects on input line 242.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below surrounding objects on input line 242.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below surrounding objects on input line 242.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below surrounding objects on input line 242.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below surrounding objects on input line 242.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below surrounding objects on input line 242.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below surrounding objects on input line 346.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below surrounding objects on input line 346.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below surrounding objects on input line 346.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below surrounding objects on input line 346.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below surrounding objects on input line 346.
+
+
+Class acmart Warning: \vspace should only be used to provide space above/below surrounding objects on input line 346.
+
+[1.1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (/usr/share/texlive/texmf-dist/tex/generic/stringenc/se-pdfdoc.def
+File: se-pdfdoc.def 2019/11/29 v1.12 stringenc: PDFDocEncoding
+Table 4a PDF built and uploaded (Tue 30 Jun 2026 08:02:24 PM CEST)

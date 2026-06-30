@@ -1,0 +1,5 @@
+{
+  "tc": "loss 10% delay 100ms rate 1mbit",
+  "kem_alg": "kyber512",
+  "sig_alg": "rsa:2048"
+}

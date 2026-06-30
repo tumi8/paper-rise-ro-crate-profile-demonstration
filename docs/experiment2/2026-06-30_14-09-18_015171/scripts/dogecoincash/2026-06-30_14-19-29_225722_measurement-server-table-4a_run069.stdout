@@ -1,0 +1,9 @@
+sending incremental file list
+CA.crt
+
+          1,115 100%    0.00kB/s    0:00:00  
+          1,115 100%    0.00kB/s    0:00:00 (xfr#1, to-chk=0/1)
+Starting experiment (Tue 30 Jun 2026 05:08:14 PM CEST)
+Waiting for warmup (Tue 30 Jun 2026 05:08:14 PM CEST)
+Received warmup (Tue 30 Jun 2026 05:08:15 PM CEST)
+Killed OpenSSL server (Tue 30 Jun 2026 05:10:31 PM CEST)

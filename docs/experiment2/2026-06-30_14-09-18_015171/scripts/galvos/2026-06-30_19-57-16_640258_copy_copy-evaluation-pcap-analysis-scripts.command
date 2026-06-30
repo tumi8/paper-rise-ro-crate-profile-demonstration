@@ -1,0 +1,1 @@
+scp -r /home/erhauser/repositories/research/rise-pq-tls/evaluation-pcap-analysis galvos.blockchain.net.cit.tum.de:/root/evaluation-pcap-analysis

@@ -1,0 +1,434 @@
+{
+    "motherboard": {
+        "bios": {
+            "date": "10/09/2018",
+            "vendor": "American Megatrends",
+            "version": "1.1c"
+        },
+        "model": "H11DSi-NT",
+        "vendor": "Supermicro",
+        "revision": "1.01"
+    },
+    "processor": [
+        {
+            "slot": "CPU1",
+            "cores": 32,
+            "model": "EPYC 7601",
+            "vendor": "AMD",
+            "threads": 64,
+            "version": "23.1.2",
+            "microcode": "134222375",
+            "virtualized": false,
+            "architecture": "64bit"
+        },
+        {
+            "slot": "CPU2",
+            "cores": 32,
+            "model": "EPYC 7601",
+            "vendor": "AMD",
+            "threads": 64,
+            "version": "23.1.2",
+            "microcode": "134222375",
+            "virtualized": false,
+            "architecture": "64bit"
+        }
+    ],
+    "memory": {
+        "dimms": [
+            {
+                "slot": "P1-DIMMA1",
+                "type": "DDR4",
+                "empty": false,
+                "model": "M386A8K40BM2-CTD",
+                "serial": "40D1A82B",
+                "vendor": "Samsung",
+                "capacity_bytes": 68719476736,
+                "maximum_speed_val": 2667,
+                "capacity_human_val": 64,
+                "maximum_speed_unit": "MHz",
+                "capacity_human_unit": "GiB",
+                "operational_speed_val": 2667,
+                "operational_speed_unit": "MHz"
+            },
+            {
+                "slot": "P1-DIMMB1",
+                "type": "DDR4",
+                "empty": false,
+                "model": "M386A8K40BM2-CTD",
+                "serial": "40D29A3E",
+                "vendor": "Samsung",
+                "capacity_bytes": 68719476736,
+                "maximum_speed_val": 2667,
+                "capacity_human_val": 64,
+                "maximum_speed_unit": "MHz",
+                "capacity_human_unit": "GiB",
+                "operational_speed_val": 2667,
+                "operational_speed_unit": "MHz"
+            },
+            {
+                "slot": "P1-DIMMC1",
+                "type": "DDR4",
+                "empty": false,
+                "model": "M386A8K40BM2-CTD",
+                "serial": "40D15726",
+                "vendor": "Samsung",
+                "capacity_bytes": 68719476736,
+                "maximum_speed_val": 2667,
+                "capacity_human_val": 64,
+                "maximum_speed_unit": "MHz",
+                "capacity_human_unit": "GiB",
+                "operational_speed_val": 2667,
+                "operational_speed_unit": "MHz"
+            },
+            {
+                "slot": "P1-DIMMD1",
+                "type": "DDR4",
+                "empty": false,
+                "model": "M386A8K40BM2-CTD",
+                "serial": "40D1B414",
+                "vendor": "Samsung",
+                "capacity_bytes": 68719476736,
+                "maximum_speed_val": 2667,
+                "capacity_human_val": 64,
+                "maximum_speed_unit": "MHz",
+                "capacity_human_unit": "GiB",
+                "operational_speed_val": 2667,
+                "operational_speed_unit": "MHz"
+            },
+            {
+                "slot": "P1-DIMME1",
+                "type": "DDR4",
+                "empty": false,
+                "model": "M386A8K40BM2-CTD",
+                "serial": "40D1BEF8",
+                "vendor": "Samsung",
+                "capacity_bytes": 68719476736,
+                "maximum_speed_val": 2667,
+                "capacity_human_val": 64,
+                "maximum_speed_unit": "MHz",
+                "capacity_human_unit": "GiB",
+                "operational_speed_val": 2667,
+                "operational_speed_unit": "MHz"
+            },
+            {
+                "slot": "P1-DIMMF1",
+                "type": "DDR4",
+                "empty": false,
+                "model": "M386A8K40BM2-CTD",
+                "serial": "40D1A7D6",
+                "vendor": "Samsung",
+                "capacity_bytes": 68719476736,
+                "maximum_speed_val": 2667,
+                "capacity_human_val": 64,
+                "maximum_speed_unit": "MHz",
+                "capacity_human_unit": "GiB",
+                "operational_speed_val": 2667,
+                "operational_speed_unit": "MHz"
+            },
+            {
+                "slot": "P1-DIMMG1",
+                "type": "DDR4",
+                "empty": false,
+                "model": "M386A8K40BM2-CTD",
+                "serial": "40D1A922",
+                "vendor": "Samsung",
+                "capacity_bytes": 68719476736,
+                "maximum_speed_val": 2667,
+                "capacity_human_val": 64,
+                "maximum_speed_unit": "MHz",
+                "capacity_human_unit": "GiB",
+                "operational_speed_val": 2667,
+                "operational_speed_unit": "MHz"
+            },
+            {
+                "slot": "P1-DIMMH1",
+                "type": "DDR4",
+                "empty": false,
+                "model": "M386A8K40BM2-CTD",
+                "serial": "40D156C7",
+                "vendor": "Samsung",
+                "capacity_bytes": 68719476736,
+                "maximum_speed_val": 2667,
+                "capacity_human_val": 64,
+                "maximum_speed_unit": "MHz",
+                "capacity_human_unit": "GiB",
+                "operational_speed_val": 2667,
+                "operational_speed_unit": "MHz"
+            },
+            {
+                "slot": "P2-DIMMA1",
+                "type": "DDR4",
+                "empty": false,
+                "model": "M386A8K40BM2-CTD",
+                "serial": "40D1A710",
+                "vendor": "Samsung",
+                "capacity_bytes": 68719476736,
+                "maximum_speed_val": 2667,
+                "capacity_human_val": 64,
+                "maximum_speed_unit": "MHz",
+                "capacity_human_unit": "GiB",
+                "operational_speed_val": 2667,
+                "operational_speed_unit": "MHz"
+            },
+            {
+                "slot": "P2-DIMMB1",
+                "type": "DDR4",
+                "empty": false,
+                "model": "M386A8K40BM2-CTD",
+                "serial": "40D1AB26",
+                "vendor": "Samsung",
+                "capacity_bytes": 68719476736,
+                "maximum_speed_val": 2667,
+                "capacity_human_val": 64,
+                "maximum_speed_unit": "MHz",
+                "capacity_human_unit": "GiB",
+                "operational_speed_val": 2667,
+                "operational_speed_unit": "MHz"
+            },
+            {
+                "slot": "P2-DIMMC1",
+                "type": "DDR4",
+                "empty": false,
+                "model": "M386A8K40BM2-CTD",
+                "serial": "40D1AA30",
+                "vendor": "Samsung",
+                "capacity_bytes": 68719476736,
+                "maximum_speed_val": 2667,
+                "capacity_human_val": 64,
+                "maximum_speed_unit": "MHz",
+                "capacity_human_unit": "GiB",
+                "operational_speed_val": 2667,
+                "operational_speed_unit": "MHz"
+            },
+            {
+                "slot": "P2-DIMMD1",
+                "type": "DDR4",
+                "empty": false,
+                "model": "M386A8K40BM2-CTD",
+                "serial": "40D1A771",
+                "vendor": "Samsung",
+                "capacity_bytes": 68719476736,
+                "maximum_speed_val": 2667,
+                "capacity_human_val": 64,
+                "maximum_speed_unit": "MHz",
+                "capacity_human_unit": "GiB",
+                "operational_speed_val": 2667,
+                "operational_speed_unit": "MHz"
+            },
+            {
+                "slot": "P2-DIMME1",
+                "type": "DDR4",
+                "empty": false,
+                "model": "M386A8K40BM2-CTD",
+                "serial": "40D28C34",
+                "vendor": "Samsung",
+                "capacity_bytes": 68719476736,
+                "maximum_speed_val": 2667,
+                "capacity_human_val": 64,
+                "maximum_speed_unit": "MHz",
+                "capacity_human_unit": "GiB",
+                "operational_speed_val": 2667,
+                "operational_speed_unit": "MHz"
+            },
+            {
+                "slot": "P2-DIMMF1",
+                "type": "DDR4",
+                "empty": false,
+                "model": "M386A8K40BM2-CTD",
+                "serial": "40D1B310",
+                "vendor": "Samsung",
+                "capacity_bytes": 68719476736,
+                "maximum_speed_val": 2667,
+                "capacity_human_val": 64,
+                "maximum_speed_unit": "MHz",
+                "capacity_human_unit": "GiB",
+                "operational_speed_val": 2667,
+                "operational_speed_unit": "MHz"
+            },
+            {
+                "slot": "P2-DIMMG1",
+                "type": "DDR4",
+                "empty": false,
+                "model": "M386A8K40BM2-CTD",
+                "serial": "40D1A773",
+                "vendor": "Samsung",
+                "capacity_bytes": 68719476736,
+                "maximum_speed_val": 2667,
+                "capacity_human_val": 64,
+                "maximum_speed_unit": "MHz",
+                "capacity_human_unit": "GiB",
+                "operational_speed_val": 2667,
+                "operational_speed_unit": "MHz"
+            },
+            {
+                "slot": "P2-DIMMH1",
+                "type": "DDR4",
+                "empty": false,
+                "model": "M386A8K40BM2-CTD",
+                "serial": "40D29F4D",
+                "vendor": "Samsung",
+                "capacity_bytes": 68719476736,
+                "maximum_speed_val": 2667,
+                "capacity_human_val": 64,
+                "maximum_speed_unit": "MHz",
+                "capacity_human_unit": "GiB",
+                "operational_speed_val": 2667,
+                "operational_speed_unit": "MHz"
+            }
+        ],
+        "dimm_slots": 16,
+        "ecc_details": "Multi-bit ECC",
+        "ecc_support": true,
+        "maximum_capacity_bytes": 2199023255552,
+        "installed_capacity_bytes": 1099511627776,
+        "maximum_capacity_human_val": 2048,
+        "maximum_capacity_human_unit": "GiB",
+        "installed_capacity_human_val": 1024,
+        "installed_capacity_human_unit": "GiB"
+    },
+    "storage": [
+        {
+            "model": "NVMe disk",
+            "serial": null,
+            "vendor": null,
+            "version": null,
+            "dev_name": "hwmon0",
+            "size_bytes": null,
+            "bus_address": null,
+            "size_human_val": null,
+            "size_human_unit": null
+        },
+        {
+            "model": "NVMe disk",
+            "serial": null,
+            "vendor": null,
+            "version": null,
+            "dev_name": "hwmon1",
+            "size_bytes": null,
+            "bus_address": null,
+            "size_human_val": null,
+            "size_human_unit": null
+        },
+        {
+            "model": "MZPLL3T2HMLS-00003",
+            "serial": "S3GYNA0K800370",
+            "vendor": "Samsung",
+            "version": "GPNA5B3Q",
+            "dev_name": "/dev/nvme0",
+            "size_bytes": 3200631791616,
+            "bus_address": "pci@0000:02:00.0",
+            "size_human_val": 3200.631791616,
+            "size_human_unit": "GB"
+        },
+        {
+            "model": "MZPLL3T2HMLS-00003",
+            "serial": "S3GYNA0K800372",
+            "vendor": "Samsung",
+            "version": "GPNA5B3Q",
+            "dev_name": "/dev/nvme1",
+            "size_bytes": 3200631791616,
+            "bus_address": "pci@0000:13:00.0",
+            "size_human_val": 3200.631791616,
+            "size_human_unit": "GB"
+        }
+    ],
+    "graphics": [],
+    "network": [
+        {
+            "model": "X550",
+            "vendor": "Intel",
+            "version": "01",
+            "firmware": "0x800007f3, 1.1276.0",
+            "interfaces": [
+                {
+                    "mac": "ac:1f:6b:71:f2:5c",
+                    "dev_name": "eno1",
+                    "bus_address": "pci@0000:01:00.0",
+                    "current_configuration": {
+                        "link_detected": true,
+                        "link_speed_val": 10,
+                        "link_speed_unit": "Gbit/s",
+                        "transceiver_type": "Internal transceiver",
+                        "transceiver_model": null,
+                        "transceiver_modes": [
+                            "100baseT/Full",
+                            "1000baseT/Full",
+                            "10000baseT/Full",
+                            "2500baseT/Full",
+                            "5000baseT/Full"
+                        ],
+                        "transceiver_medium": "Twisted Pair Cable",
+                        "transceiver_serial": null,
+                        "transceiver_revision": null
+                    }
+                },
+                {
+                    "mac": "ac:1f:6b:71:f2:5d",
+                    "dev_name": "eno2",
+                    "bus_address": "pci@0000:01:00.1",
+                    "current_configuration": {
+                        "link_detected": false,
+                        "link_speed_val": null,
+                        "link_speed_unit": null,
+                        "transceiver_type": "Internal transceiver",
+                        "transceiver_model": null,
+                        "transceiver_modes": [
+                            "100baseT/Full",
+                            "1000baseT/Full",
+                            "10000baseT/Full",
+                            "2500baseT/Full",
+                            "5000baseT/Full"
+                        ],
+                        "transceiver_medium": "Twisted Pair Cable",
+                        "transceiver_serial": null,
+                        "transceiver_revision": null
+                    }
+                }
+            ],
+            "bus_address": "pci@0000:01:00.{0,1}"
+        },
+        {
+            "model": "XL710 for 40GbE QSFP+",
+            "vendor": "Intel",
+            "version": "02",
+            "firmware": "6.01 0x800035da 1.1747.0",
+            "interfaces": [
+                {
+                    "mac": "3c:fd:fe:d0:2d:c8",
+                    "dev_name": "enp97s0f0",
+                    "bus_address": "pci@0000:61:00.0",
+                    "current_configuration": {
+                        "link_detected": false,
+                        "link_speed_val": null,
+                        "link_speed_unit": null,
+                        "transceiver_type": "No pluggable transceiver found",
+                        "transceiver_model": null,
+                        "transceiver_modes": null,
+                        "transceiver_medium": null,
+                        "transceiver_serial": null,
+                        "transceiver_revision": null
+                    }
+                },
+                {
+                    "mac": "3c:fd:fe:d0:2d:c9",
+                    "dev_name": "enp97s0f1",
+                    "bus_address": "pci@0000:61:00.1",
+                    "current_configuration": {
+                        "link_detected": true,
+                        "link_speed_val": 40,
+                        "link_speed_unit": "Gbit/s",
+                        "transceiver_type": "QSFP+",
+                        "transceiver_model": "Q.C30.2",
+                        "transceiver_modes": [
+                            "40000baseCR4/Full"
+                        ],
+                        "transceiver_medium": "Direct Attach Copper",
+                        "transceiver_serial": "F78NR82-A",
+                        "transceiver_revision": "A"
+                    }
+                }
+            ],
+            "bus_address": "pci@0000:61:00.{0,1}"
+        }
+    ]
+}

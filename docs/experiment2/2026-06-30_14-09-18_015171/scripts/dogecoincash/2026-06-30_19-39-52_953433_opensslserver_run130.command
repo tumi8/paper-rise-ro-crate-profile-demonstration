@@ -1,0 +1,1 @@
+['bash', '-c', 'taskset -c 1 /opt/openssl/bin/openssl s_server -cert /opt/test/server.crt -key /opt/test/server.key -curves p384_hqc192 -www -tls1_3 -accept 10.0.0.2:4433']

@@ -1,0 +1,68 @@
+Cloning into 'moongen'...
+Note: checking out '06164f5d4269bb1854eeea2c76c700119b0fcae3'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by performing another checkout.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -b with the checkout command again. Example:
+
+  git checkout -b <new-branch-name>
+
+HEAD is now at 06164f5d Merge remote-tracking branch 'github/master'
+In function ‘pci_get_kernel_driver_by_path’,
+    inlined from ‘pci_scan_one.isra.1’ at /root/moongen/libmoon/deps/dpdk/lib/librte_eal/linuxapp/eal/eal_pci.c:338:8:
+/root/moongen/libmoon/deps/dpdk/lib/librte_eal/linuxapp/eal/eal_pci.c:82:3: warning: ‘strncpy’ specified bound depends on the length of the source argument [-Wstringop-overflow=]
+   strncpy(dri_name, name + 1, strlen(name + 1) + 1);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/root/moongen/libmoon/deps/dpdk/lib/librte_eal/linuxapp/eal/eal_pci.c: In function ‘pci_scan_one.isra.1’:
+/root/moongen/libmoon/deps/dpdk/lib/librte_eal/linuxapp/eal/eal_pci.c:82:31: note: length computed here
+   strncpy(dri_name, name + 1, strlen(name + 1) + 1);
+                               ^~~~~~~~~~~~~~~~
+/root/moongen/libmoon/deps/dpdk/lib/librte_table/rte_table_hash_cuckoo.c: In function ‘rte_table_hash_cuckoo_create’:
+/root/moongen/libmoon/deps/dpdk/lib/librte_table/rte_table_hash_cuckoo.c:151:16: warning: cast between incompatible function types from ‘rte_table_hash_op_hash’ {aka ‘long unsigned int (*)(void *, unsigned int,  long unsigned int)’} to ‘uint32_t (*)(const void *, uint32_t,  uint32_t)’ {aka ‘unsigned int (*)(const void *, unsigned int,  unsigned int)’} [-Wcast-function-type]
+   .hash_func = (rte_hash_function)(p->f_hash),
+                ^
+In function ‘nfp_net_read_mac’,
+    inlined from ‘nfp_net_init’ at /root/moongen/libmoon/deps/dpdk/drivers/net/nfp/nfp_net.c:2540:2:
+/root/moongen/libmoon/deps/dpdk/drivers/net/nfp/nfp_net.c:600:2: warning: ‘memcpy’ forming offset [5, 6] is out of the bounds [0, 4] of object ‘tmp’ with type ‘uint32_t’ {aka ‘unsigned int’} [-Warray-bounds]
+  memcpy(&hw->mac_addr[0], &tmp, sizeof(struct ether_addr));
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/root/moongen/libmoon/deps/dpdk/drivers/net/nfp/nfp_net.c: In function ‘nfp_net_init’:
+/root/moongen/libmoon/deps/dpdk/drivers/net/nfp/nfp_net.c:597:11: note: ‘tmp’ declared here
+  uint32_t tmp;
+           ^~~
+In file included from /root/moongen/libmoon/deps/dpdk/drivers/net/qede/base/ecore_int.c:9:
+In function ‘ecore_int_deassertion’,
+    inlined from ‘ecore_int_attentions’ at /root/moongen/libmoon/deps/dpdk/drivers/net/qede/base/ecore_int.c:1085:8,
+    inlined from ‘ecore_int_sp_dpc’ at /root/moongen/libmoon/deps/dpdk/drivers/net/qede/base/ecore_int.c:1191:3:
+/root/moongen/libmoon/deps/dpdk/drivers/net/qede/base/bcm_osal.h:409:40: warning: ‘strncpy’ specified bound 30 equals destination size [-Wstringop-truncation]
+ #define OSAL_STRNCPY(dst, string, len) strncpy(dst, string, len)
+                                        ^~~~~~~~~~~~~~~~~~~~~~~~~
+/root/moongen/libmoon/deps/dpdk/drivers/net/qede/base/ecore_int.c:997:7: note: in expansion of macro ‘OSAL_STRNCPY’
+       OSAL_STRNCPY(bit_name,
+       ^~~~~~~~~~~~
+/root/moongen/libmoon/deps/dpdk/drivers/net/virtio/virtio_user/vhost_kernel_tap.c: In function ‘vhost_kernel_open_tap’:
+/root/moongen/libmoon/deps/dpdk/drivers/net/virtio/virtio_user/vhost_kernel_tap.c:98:3: warning: ‘strncpy’ specified bound 16 equals destination size [-Wstringop-truncation]
+   strncpy(ifr.ifr_name, *p_ifname, IFNAMSIZ);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/root/moongen/libmoon/deps/dpdk/drivers/net/qede/qede_main.c: In function ‘qed_slowpath_start’:
+/root/moongen/libmoon/deps/dpdk/drivers/net/qede/qede_main.c:299:3: warning: ‘strncpy’ output may be truncated copying 12 bytes from a string of length 127 [-Wstringop-truncation]
+   strncpy((char *)drv_version.name, (const char *)params->name,
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    MCP_DRV_VER_STR_SIZE - 4);
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+/root/moongen/libmoon/deps/dpdk/app/proc_info/main.c: In function ‘nic_xstats_display’:
+/root/moongen/libmoon/deps/dpdk/app/proc_info/main.c:524:45: warning: ‘%s’ directive writing up to 255 bytes into a region of size between 167 and 232 [-Wformat-overflow=]
+    sprintf(buf, "PUTVAL %s/dpdkstat-port.%u/%s-%s N:%"
+                                             ^~
+     PRIu64"\n", host_id, port_id, counter_type,
+                                   ~~~~~~~~~~~~
+/root/moongen/libmoon/deps/dpdk/app/proc_info/main.c:524:4: note: ‘sprintf’ output between 31 and 433 bytes into a destination of size 256
+    sprintf(buf, "PUTVAL %s/dpdkstat-port.%u/%s-%s N:%"
+    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     PRIu64"\n", host_id, port_id, counter_type,
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     xstats_names[i].name, values[i]);
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

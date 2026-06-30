@@ -1,0 +1,28 @@
+#!/bin/bash
+set -e
+
+tee /etc/apt/sources.list >/dev/null <<'EOF'
+deb http://archive.debian.org/debian buster main contrib non-free
+deb http://archive.debian.org/debian-security buster/updates main contrib non-free
+EOF
+
+echo 'Acquire::Check-Valid-Until "false";' | tee /etc/apt/apt.conf.d/99no-check-valid-until >/dev/null
+
+DEBIAN_FRONTEND=noninteractive apt-get update
+DEBIAN_FRONTEND=noninteractive apt-get install -y zstd
+
+GIT_REPO=$(pos_get_variable moongen/repo)
+GIT_BRANCH=$(pos_get_variable moongen/branch)
+GIT_COMMIT=$(pos_get_variable moongen/commit)
+MOONGEN=moongen
+
+if [[ ! -e "$MOONGEN" ]]; then
+	git clone --jobs 4 --recurse-submodules --branch "$GIT_BRANCH"  "$GIT_REPO" "$MOONGEN"
+fi
+cd "$MOONGEN"
+git checkout "$GIT_COMMIT"
+./build.sh
+./bind-interfaces.sh
+./setup-hugetlbfs.sh
+
+echo "Sniffer setup finished ($(date))"

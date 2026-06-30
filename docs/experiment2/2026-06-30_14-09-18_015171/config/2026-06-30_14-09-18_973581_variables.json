@@ -1,0 +1,92 @@
+{
+    "loop": {
+        "kem_alg": [
+            "X25519",
+            "bikel1",
+            "hqc128",
+            "kyber512",
+            "kyber90s512",
+            "prime256v1",
+            "p256_bikel1",
+            "p256_hqc128",
+            "p256_kyber512",
+            "bikel3",
+            "hqc192",
+            "kyber768",
+            "kyber90s768",
+            "secp384r1",
+            "p384_bikel3",
+            "p384_hqc192",
+            "p384_kyber768",
+            "hqc256",
+            "kyber1024",
+            "kyber90s1024",
+            "secp521r1",
+            "p521_hqc256",
+            "p521_kyber1024"
+        ],
+        "sig_alg": [
+            "rsa:2048"
+        ],
+        "tc": [
+            "loss 0%",
+            "loss 10%",
+            "rate 1mbit",
+            "delay 500ms",
+            "loss 10% delay 100ms rate 1mbit",
+            "loss 4% delay 22ms rate 880mbit"
+        ]
+    },
+    "galvos": {
+        "num_cores": 16,
+        "num_worst": 5000,
+        "trim_ms": 1000,
+        "bucket_size": 100
+    },
+    "global": {
+        "client": "dogecoin",
+        "ip": {
+            "client": "10.0.0.1",
+            "server": "10.0.0.2"
+        },
+        "liboqs_commit": "2e2ddb4e0493014694820471396984b30d59cf97",
+        "liboqs_repository": "https://github.com/open-quantum-safe/liboqs.git",
+        "measurement_time": 15,
+        "openssl_commit": "a31d411d28f0ecbdd9faa9a5ca4792caea622c66",
+        "openssl_repository": "https://github.com/tumi8/openssl-pqc.git",
+        "server": "dogecoincash",
+        "sniffer": "dogecoingold"
+    },
+    "dogecoin": {
+        "port": "eno7",
+        "openssl_path": "/opt/openssl",
+        "openssl": "/opt/openssl/bin/openssl"
+    },
+    "dogecoincash": {
+        "port": "eno7",
+        "openssl_path": "/opt/openssl",
+        "openssl": "/opt/openssl/bin/openssl",
+        "openssl_cnf": "/opt/openssl/ssl/openssl.cnf"
+    },
+    "dogecoingold": {
+        "port": {
+            "rx": "eno8",
+            "tx": "eno7"
+        },
+        "portno": {
+            "rx": "1",
+            "tx": "0"
+        },
+        "timestamping": {
+            "hw": "0"
+        },
+        "capture": {
+            "length": "10000"
+        },
+        "moongen": {
+            "repo": "https://gitlab.lrz.de/moongen-mirror/moongen.git",
+            "branch": "master",
+            "commit": "06164f5d4269bb1854eeea2c76c700119b0fcae3"
+        }
+    }
+}

@@ -1,0 +1,13 @@
+Generating a RSA private key
+...........+++++
+.............................+++++
+writing new private key to 'CA.key'
+-----
+Generating a RSA private key
+.........+++++
+.......................................................................................................................................................+++++
+writing new private key to '/opt/test/server.key'
+-----
+Signature ok
+subject=CN = 10.0.0.2
+Getting CA Private Key

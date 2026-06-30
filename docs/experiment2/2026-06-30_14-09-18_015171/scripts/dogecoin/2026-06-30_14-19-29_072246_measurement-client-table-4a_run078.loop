@@ -1,0 +1,5 @@
+{
+  "tc": "delay 500ms",
+  "kem_alg": "bikel3",
+  "sig_alg": "rsa:2048"
+}

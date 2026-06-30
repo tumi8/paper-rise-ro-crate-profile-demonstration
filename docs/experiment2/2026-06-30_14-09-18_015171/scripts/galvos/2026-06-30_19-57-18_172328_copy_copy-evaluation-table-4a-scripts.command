@@ -1,0 +1,1 @@
+scp -r /home/erhauser/repositories/research/rise-pq-tls/evaluation-table-4a galvos.blockchain.net.cit.tum.de:/root/evaluation-table-4a

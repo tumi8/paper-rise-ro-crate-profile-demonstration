@@ -1,0 +1,5 @@
+{
+  "tc": "loss 0%",
+  "kem_alg": "bikel1",
+  "sig_alg": "rsa:2048"
+}

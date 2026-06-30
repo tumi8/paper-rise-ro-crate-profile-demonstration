@@ -1,0 +1,19 @@
+#!/bin/bash
+set -e
+
+apt-get update --allow-releaseinfo-change
+DEBIAN_FRONTEND=noninteractive apt-get install -y postgresql postgresql-client parallel python3-pip texlive-full zstd \
+	python3-yaml
+
+python3 -m pip install pypacker netifaces pandas click
+
+mkdir "/root/sniffer-raw"
+
+# Keep a copy of the evaluation code in the result folder for reproducibility
+TMP=$(mktemp -d)
+mkdir "$TMP/evaluation-code"
+cp -r /root/evaluation-pcap-analysis /root/evaluation-table-4a "$TMP/evaluation-code/"
+pos_upload --recursive "$TMP/evaluation-code"
+rm -rf "$TMP"
+
+echo "Evaluator setup finished ($(date))"

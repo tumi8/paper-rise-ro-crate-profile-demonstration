@@ -1,0 +1,13 @@
+{
+    "id": "erhauser_260630_140918_015171",
+    "created": "2026-06-30 14:09:18.015624",
+    "updated": "2026-06-30 14:19:28.568392",
+    "owner": "erhauser",
+    "result_folder": "erhauser/default/2026-06-30_14-09-18_015171",
+    "nodes": [
+        "dogecoin",
+        "galvos",
+        "dogecoincash",
+        "dogecoingold"
+    ]
+}

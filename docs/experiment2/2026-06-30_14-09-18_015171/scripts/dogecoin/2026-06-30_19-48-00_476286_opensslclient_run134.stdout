@@ -1,0 +1,5 @@
+Collecting connection statistics for 15 seconds
+********************************************************
+
+56 connections in 0.09s; 622.22 connections/user sec, bytes read 380184
+56 connections in 16 real seconds, 6789 bytes read per connection

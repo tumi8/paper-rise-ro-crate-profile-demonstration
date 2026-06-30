@@ -1,0 +1,42 @@
+Cloning into '/opt/liboqs'...
+Cloning into '/opt/openssl-src'...
+Note: switching to 'a31d411d28f0ecbdd9faa9a5ca4792caea622c66'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+HEAD is now at a31d411d28 Add documentation needed
+Note: switching to '2e2ddb4e0493014694820471396984b30d59cf97'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+HEAD is now at 2e2ddb4e0 Update Kyber and Dilithium from upstream (#1316)
+ar: creating apps/libapps.a
+ar: creating libssl.a
+ar: creating test/libtestutil.a
+ar: creating libcrypto.a

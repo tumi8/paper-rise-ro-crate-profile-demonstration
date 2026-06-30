@@ -1,0 +1,22 @@
+
+Read : 0 / 14 MB ==>  0% 
+Read : 2 / 14 MB ==> 65% 
+Read : 4 / 14 MB ==> 65% 
+Read : 6 / 14 MB ==> 65% 
+Read : 9 / 14 MB ==> 65% 
+Read : 11 / 14 MB ==> 65% 
+Read : 13 / 14 MB ==> 65% 
+                                                                               
+latencies-pre.pcap   : 65.48%   (15096361 => 9884900 bytes, latencies-pre.pcap.zst) 
+
+Read : 0 / 53 MB ==>  0% 
+Read : 4 / 53 MB ==> 91% 
+Read : 12 / 53 MB ==> 91% 
+Read : 20 / 53 MB ==> 91% 
+Read : 26 / 53 MB ==> 91% 
+Read : 32 / 53 MB ==> 91% 
+Read : 38 / 53 MB ==> 91% 
+Read : 44 / 53 MB ==> 91% 
+Read : 50 / 53 MB ==> 91% 
+                                                                               
+latencies-post.pcap  : 91.17%   (55933560 => 50996101 bytes, latencies-post.pcap.zst) 

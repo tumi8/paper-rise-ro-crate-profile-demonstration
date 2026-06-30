@@ -1,0 +1,57 @@
+#!/bin/bash
+set -e
+
+NETEM=$(pos_get_variable --from-loop tc)
+PORT=$(pos_get_variable port)
+
+eval "tc qdisc del dev $PORT root netem" || true
+eval "tc qdisc add dev $PORT root netem $NETEM"
+
+SIG_ALG=$(pos_get_variable --from-loop sig_alg)
+KEM_ALG=$(pos_get_variable --from-loop kem_alg)
+IP=$(pos_get_variable --from-global ip/server)
+export OPENSSL_PATH=$(pos_get_variable --remote openssl_path)
+OPENSSL=$(pos_get_variable --remote openssl)
+export OPENSSL_CNF=$(pos_get_variable --remote openssl_cnf)
+MEASUREMENT_TIME=$(pos_get_variable --from-global measurement_time)
+CLIENT=$(pos_get_variable --from-global client)
+SERVER=$(pos_get_variable --from-global server)
+SNIFFER=$(pos_get_variable --from-global sniffer)
+
+cd "${OPENSSL_PATH}"/bin
+
+${OPENSSL} req -x509 -new -newkey "${SIG_ALG}" -keyout CA.key -out CA.crt -nodes -subj "/CN=oqstest CA" -days 365 -config "${OPENSSL_CNF}"
+
+rsync -r -P -e "ssh -i /root/.ssh/cert-sync-key -o StrictHostKeyChecking=no" CA.crt "$CLIENT":"$OPENSSL_PATH"
+
+mkdir -p /opt/test
+
+if [ "x$SIG_ALG" != "x" ]; then
+    cd /opt/openssl/bin
+    # generate new server CSR using pre-set CA.key & cert
+    ${OPENSSL} req -new -newkey "${SIG_ALG}" -keyout /opt/test/server.key -out /opt/test/server.csr -nodes -subj "/CN=$IP"
+    ${OPENSSL} x509 -req -in /opt/test/server.csr -out /opt/test/server.crt -CA CA.crt -CAkey CA.key -CAcreateserial -days 365
+fi
+
+pos_sync "$CLIENT" "$SERVER" "$SNIFFER"
+echo "Starting experiment ($(date))"
+
+# Start a TLS1.3 test server based on OpenSSL accepting only the specified KEM_ALG
+KEM_ARG=""
+if [ "$KEM_ALG" != "default" ]; then
+  KEM_ARG="-curves $KEM_ALG"
+fi
+pos_run --loop opensslserver -- bash -c "taskset -c 1 ${OPENSSL} s_server -cert /opt/test/server.crt -key /opt/test/server.key $KEM_ARG -www -tls1_3 -accept $IP:4433"
+
+echo "Waiting for warmup ($(date))"
+pos_sync -t warmup "$CLIENT" "$SERVER"
+echo "Received warmup ($(date))"
+
+# Make sure to have this running the whole time
+sleep $((MEASUREMENT_TIME + 120))
+
+pos_kill --loop opensslserver
+pos_sync "$CLIENT" "$SERVER" "$SNIFFER"
+
+echo "Killed OpenSSL server ($(date))"
+sleep 2

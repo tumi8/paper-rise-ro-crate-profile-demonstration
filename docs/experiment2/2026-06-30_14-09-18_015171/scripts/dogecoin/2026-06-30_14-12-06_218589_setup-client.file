@@ -1,0 +1,72 @@
+#!/bin/bash
+set -e
+
+PORT=$(pos_get_variable port)
+IP=$(pos_get_variable --from-global ip/client)
+
+# Authorize the cert-sync key so the server can rsync the CA cert here
+mkdir -p /root/.ssh
+chmod 700 /root/.ssh
+cat /root/.ssh/cert-sync-key.pub >> /root/.ssh/authorized_keys
+chmod 600 /root/.ssh/authorized_keys
+
+# liboqs build type variant; maximum portability of image:
+export LIBOQS_BUILD_DEFINES="-DOQS_DIST_BUILD=ON"
+export OPENSSL_PATH=/opt/openssl
+export OPENSSL_SRC_PATH=/opt/openssl-src
+export OPENSSL_BUILD_DEFINES="-DOQS_DEFAULT_GROUPS=p384_kyber768:X25519:kyber768"
+export DEBIAN_FRONTEND=noninteractive
+
+# Define OPENSSL Repository to clone
+export OPENSSL_REPO=$(pos_get_variable --from-global openssl_repository)
+export OPENSSL_COMMIT=$(pos_get_variable --from-global openssl_commit)
+export LIBOQS_REPO=$(pos_get_variable --from-global liboqs_repository)
+export LIBOQS_COMMIT=$(pos_get_variable --from-global liboqs_commit)
+
+export MAKE_DEFINES="-j$(nproc)"
+
+apt-get update
+apt-get upgrade -y
+
+# Get all software packages required for building all components
+apt-get install -y build-essential \
+            libtool automake autoconf cmake ninja-build \
+            make \
+            openssl libssl-dev \
+            git wget libpcre3 libpcre3-dev
+
+# get OQS sources
+git clone "${LIBOQS_REPO}" /opt/liboqs
+git clone "${OPENSSL_REPO}" "${OPENSSL_SRC_PATH}"
+cd "${OPENSSL_SRC_PATH}"
+git checkout "$OPENSSL_COMMIT"
+
+# build liboqs (static only)
+cd /opt/liboqs
+git checkout "$LIBOQS_COMMIT"
+mkdir -p build-static && cd build-static
+cmake -G"Ninja" ${LIBOQS_BUILD_DEFINES} -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX="${OPENSSL_SRC_PATH}/oqs" ..
+ninja
+ninja install
+
+# build openssl
+cd "${OPENSSL_SRC_PATH}"
+mkdir -p "${OPENSSL_PATH}"
+LDFLAGS="-Wl,-rpath -Wl,${OPENSSL_PATH}/lib" ./config shared ${OPENSSL_BUILD_DEFINES} --prefix="${OPENSSL_PATH}"
+make generate_crypto_objects
+make ${MAKE_DEFINES}
+make install
+
+export PATH="${OPENSSL_PATH}/bin:${PATH}"
+export OPENSSL=${OPENSSL_PATH}/bin/openssl
+
+# Set interfaces and links up for sending traffic
+ip link add link "$PORT" name macvtap0 type macvtap
+ip link set dev macvtap0 up
+ip link set dev "$PORT" up
+ip address add "$IP"/24 dev macvtap0
+
+pos_set_variable openssl_path "${OPENSSL_PATH}"
+pos_set_variable openssl "${OPENSSL}"
+
+echo "Client setup finished ($(date))"

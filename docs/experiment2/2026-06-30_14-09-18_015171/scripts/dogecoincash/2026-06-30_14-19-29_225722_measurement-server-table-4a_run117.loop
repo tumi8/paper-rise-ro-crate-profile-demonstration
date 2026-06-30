@@ -1,0 +1,5 @@
+{
+  "tc": "loss 4% delay 22ms rate 880mbit",
+  "kem_alg": "hqc128",
+  "sig_alg": "rsa:2048"
+}

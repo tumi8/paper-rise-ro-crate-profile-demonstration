@@ -1,0 +1,1 @@
+scp /home/erhauser/repositories/research/rise-pq-tls/ssh-key-cert-sync/cert-sync-key dogecoincash.blockchain.net.cit.tum.de:/root/.ssh/

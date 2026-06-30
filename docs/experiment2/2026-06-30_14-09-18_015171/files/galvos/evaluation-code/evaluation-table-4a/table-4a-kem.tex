@@ -1,0 +1,372 @@
+\documentclass[class=acmart,sigconf,9pt,margin=5mm]{standalone}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{csvsimple}
+\usepackage{xcolor}
+\usepackage{xstring}
+\usepackage{xfp}
+\usepackage{ifthen}
+
+\usepackage{tumcolor}
+
+\newcommand{\ColorChSh}{TUMLightBlue!40}
+\newcommand{\ColorShCf}{TUMOrange!35}
+
+% Mock some commands that might be missing
+\providecommand{\tnote}[1]{\textsuperscript{#1}}
+\providecommand{\acrshort}[1]{#1}
+\newcommand*{\IfStringInList}[4]{%
+  \IfSubStr{,#2,}{,#1,}{#3}{#4}%
+}
+
+\begin{document}
+\renewcommand{\arraystretch}{1.1}
+
+\footnotesize
+
+\begin{tabular}{@{\hspace{1em}} l @{\hspace{1ex}} p{2cm} *{6}{l} @{\hspace{1em}}}
+	\toprule
+	\multirow{1}{*}{Lvl} & \multirow{1}{*}{KA} & No Emulation &  High Loss (10\%) & Low Bandwidth\tnote{1} & High Delay (1s RTT) & LTE-M\tnote{2} & 5G\tnote{3}\\
+%	\cmidrule(lr){3-4} \cmidrule(lr){5-6}
+%	& & {Latency Median (ms)} & {\# Total} & {Client} & {Server} \\
+	\midrule
+
+	\csvreader[ head to column names,
+	late after head=\xdef\lvlshown{0},
+	late after line =  \\  ,
+	full filter = \ifcsvstrcmp{\csvcoli}{1}{\csvfilteraccept}{\ifcsvstrcmp{\csvcoli}{0}{\csvfilteraccept}{\csvfilterreject}}
+	]
+	{data_table-4a.csv}{}{%
+
+		\vspace{-.3em}
+
+		\ifnum\lvlshown=0 1\gdef\lvlshown{1}\fi
+
+		& \texttt{\IfStringInList{\kem}{X25519,p256,p384,p521}{\textbf{\kem}}{\kem}} &
+
+		\ifthenelse{\fpeval{0\None>0}=1}{%
+			\ifthenelse{\fpeval{0\None < 5000000}=1}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\NoneRel,0.75em) node[pos=.5] { };
+					\node[anchor=south west] at  ($(\NoneRel,0) + (1ex,0)$) {\scriptsize\NoneTable};
+				\end{tikzpicture}%
+			}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\NoneRel,0.75em) node[pos=.5] { \scriptsize \NoneTable };
+				\end{tikzpicture}%
+			}%
+		}{}%
+		
+		&
+		
+		\ifthenelse{\fpeval{0\highLoss>0}=1}{%
+			\ifthenelse{\fpeval{0\highLoss < 6000000}=1}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\highLossRel,0.75em) node[pos=.5] { };
+					\node[anchor=south west] at  ($(\highLossRel,0) + (1ex,0)$) {\scriptsize\highLossTable};
+				\end{tikzpicture}%
+			}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\highLossRel,0.75em) node[pos=.5] { \scriptsize \highLossTable };
+				\end{tikzpicture}%
+			}%
+		}{}%
+		
+		&
+		
+		\ifthenelse{\fpeval{0\lowBandwidth>0}=1}{%
+			\ifthenelse{\fpeval{0\lowBandwidth < 40000000}=1}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\lowBandwidthRel,0.75em) node[pos=.5] { };
+					\node[anchor=south west] at  ($(\lowBandwidthRel,0) + (1ex,0)$) {\scriptsize\lowBandwidthTable};
+				\end{tikzpicture}%
+			}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\lowBandwidthRel,0.75em) node[pos=.5] { \scriptsize \lowBandwidthTable };
+				\end{tikzpicture}%
+			}%
+		}{}%
+		
+		&
+		
+		\ifthenelse{\fpeval{0\highDelay > 0}=1}{%
+			\ifthenelse{\fpeval{0\highDelay < 2000000000}=1}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\highDelayRel,0.75em) node[pos=.5] { };
+					\node[anchor=south west] at  ($(\highDelayRel,0) + (1ex,0)$) {\scriptsize\highDelayTable};
+				\end{tikzpicture}%
+			}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\highDelayRel,0.75em) node[pos=.5] { \scriptsize \highDelayTable };
+				\end{tikzpicture}%
+			}%
+		}{}%
+		
+		&
+		
+		\ifthenelse{\fpeval{0\LTEM>0}=1}{%
+			\ifthenelse{\fpeval{0\LTEM < 400000000}=1}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\LTEMRel,0.75em) node[pos=.5] { };
+					\node[anchor=south west] at  ($(\LTEMRel,0) + (1ex,0)$) {\scriptsize\LTEMTable};
+				\end{tikzpicture}%
+			}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\LTEMRel,0.75em) node[pos=.5] { \scriptsize \LTEMTable };
+				\end{tikzpicture}%
+			}%
+		}{}%
+		
+		&
+		
+		\ifthenelse{\fpeval{0\fiveG>0}=1}{%
+			\ifthenelse{\fpeval{0\fiveG < 90000000}=1}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\fiveGRel,0.75em) node[pos=.5] { };
+					\node[anchor=south west] at  ($(\fiveGRel,0) + (1ex,0)$) {\scriptsize\fiveGTable};
+				\end{tikzpicture}%
+			}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\fiveGRel,0.75em) node[pos=.5] { \scriptsize \fiveGTable };
+				\end{tikzpicture}%
+			}%
+		}{}%
+		
+		
+	}
+	\midrule
+
+	\csvreader[ head to column names,
+	late after head=\xdef\levelOld{0},
+	after line=\xdef\levelOld{\level},
+	late after line =  \\  ,
+	full filter = \ifcsvstrcmp{\csvcoli}{3}{\csvfilteraccept}{\csvfilterreject}
+	]
+	{data_table-4a.csv}{}{%
+		
+		\vspace{-.3em}
+		
+		\if\level\levelOld\else{\level}\fi
+		
+		& \texttt{\IfStringInList{\kem}{X25519,p256,p384,p521}{\textbf{\kem}}{\kem}} &
+		
+		\ifthenelse{\fpeval{\None < 5000000}=1}{%
+			\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+				\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\NoneRel,0.75em) node[pos=.5] { };
+				\node[anchor=south west] at  ($(\NoneRel,0) + (1ex,0)$) {\scriptsize\NoneTable};
+			\end{tikzpicture}%
+		}{%
+			\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+				\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\NoneRel,0.75em) node[pos=.5] { \scriptsize \NoneTable };
+			\end{tikzpicture}%
+		}%
+		
+		&
+		
+		\ifthenelse{\fpeval{0\highLoss>0}=1}{%
+			\ifthenelse{\fpeval{0\highLoss < 6000000}=1}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\highLossRel,0.75em) node[pos=.5] { };
+					\node[anchor=south west] at  ($(\highLossRel,0) + (1ex,0)$) {\scriptsize\highLossTable};
+				\end{tikzpicture}%
+			}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\highLossRel,0.75em) node[pos=.5] { \scriptsize \highLossTable };
+				\end{tikzpicture}%
+			}%
+		}{}%
+		
+		&
+		
+		\ifthenelse{\fpeval{0\lowBandwidth>0}=1}{%
+			\ifthenelse{\fpeval{0\lowBandwidth < 40000000}=1}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\lowBandwidthRel,0.75em) node[pos=.5] { };
+					\node[anchor=south west] at  ($(\lowBandwidthRel,0) + (1ex,0)$) {\scriptsize\lowBandwidthTable};
+				\end{tikzpicture}%
+			}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\lowBandwidthRel,0.75em) node[pos=.5] { \scriptsize \lowBandwidthTable };
+				\end{tikzpicture}%
+			}%
+		}{}%
+		
+		&
+		
+		\ifthenelse{\fpeval{0\highDelay > 0}=1}{%
+			\ifthenelse{\fpeval{0\highDelay < 2000000000}=1}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\highDelayRel,0.75em) node[pos=.5] { };
+					\node[anchor=south west] at  ($(\highDelayRel,0) + (1ex,0)$) {\scriptsize\highDelayTable};
+				\end{tikzpicture}%
+			}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\highDelayRel,0.75em) node[pos=.5] { \scriptsize \highDelayTable };
+				\end{tikzpicture}%
+			}%
+		}{}%
+
+		&
+		
+		\ifthenelse{\fpeval{0\LTEM>0}=1}{%
+			\ifthenelse{\fpeval{0\LTEM < 400000000}=1}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\LTEMRel,0.75em) node[pos=.5] { };
+					\node[anchor=south west] at  ($(\LTEMRel,0) + (1ex,0)$) {\scriptsize\LTEMTable};
+				\end{tikzpicture}%
+			}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\LTEMRel,0.75em) node[pos=.5] { \scriptsize \LTEMTable };
+				\end{tikzpicture}%
+			}%
+		}{}%
+		
+		&
+		
+		\ifthenelse{\fpeval{0\fiveG>0}=1}{%
+			\ifthenelse{\fpeval{0\fiveG < 90000000}=1}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\fiveGRel,0.75em) node[pos=.5] { };
+					\node[anchor=south west] at  ($(\fiveGRel,0) + (1ex,0)$) {\scriptsize\fiveGTable};
+				\end{tikzpicture}%
+			}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\fiveGRel,0.75em) node[pos=.5] { \scriptsize \fiveGTable };
+				\end{tikzpicture}%
+			}%
+		}{}%
+		
+		
+	}
+	\midrule
+	
+	\csvreader[ head to column names,
+	late after head=\xdef\levelOld{0},
+	after line=\xdef\levelOld{\level},
+	late after line =  \\  ,
+	full filter = \ifcsvstrcmp{\csvcoli}{5}{\csvfilteraccept}{\csvfilterreject}
+	]
+	{data_table-4a.csv}{}{%
+		
+		\vspace{-.3em}
+		
+		\if\level\levelOld\else{\level}\fi
+		
+		& \texttt{\IfStringInList{\kem}{X25519,p256,p384,p521}{\textbf{\kem}}{\kem}} &
+		
+		\ifthenelse{\fpeval{\None < 5000000}=1}{%
+			\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+				\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\NoneRel,0.75em) node[pos=.5] { };
+				\node[anchor=south west] at  ($(\NoneRel,0) + (1ex,0)$) {\scriptsize\NoneTable};
+			\end{tikzpicture}%
+		}{%
+			\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+				\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\NoneRel,0.75em) node[pos=.5] { \scriptsize \NoneTable };
+			\end{tikzpicture}%
+		}%
+		
+		&
+		
+		\ifthenelse{\fpeval{0\highLoss>0}=1}{%
+			\ifthenelse{\fpeval{0\highLoss < 6000000}=1}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\highLossRel,0.75em) node[pos=.5] { };
+					\node[anchor=south west] at  ($(\highLossRel,0) + (1ex,0)$) {\scriptsize\highLossTable};
+				\end{tikzpicture}%
+			}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\highLossRel,0.75em) node[pos=.5] { \scriptsize \highLossTable };
+				\end{tikzpicture}%
+			}%
+		}{}%
+		
+		&
+		
+		\ifthenelse{\fpeval{0\lowBandwidth>0}=1}{%
+			\ifthenelse{\fpeval{0\lowBandwidth < 40000000}=1}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\lowBandwidthRel,0.75em) node[pos=.5] { };
+					\node[anchor=south west] at  ($(\lowBandwidthRel,0) + (1ex,0)$) {\scriptsize\lowBandwidthTable};
+				\end{tikzpicture}%
+			}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\lowBandwidthRel,0.75em) node[pos=.5] { \scriptsize \lowBandwidthTable };
+				\end{tikzpicture}%
+			}%
+		}{}%
+		
+		&
+		
+		\ifthenelse{\fpeval{0\highDelay > 0}=1}{%
+			\ifthenelse{\fpeval{0\highDelay < 2000000000}=1}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\highDelayRel,0.75em) node[pos=.5] { };
+					\node[anchor=south west] at  ($(\highDelayRel,0) + (1ex,0)$) {\scriptsize\highDelayTable};
+				\end{tikzpicture}%
+			}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\highDelayRel,0.75em) node[pos=.5] { \scriptsize \highDelayTable };
+				\end{tikzpicture}%
+			}%
+		}{}%
+		
+		&
+		
+		\ifthenelse{\fpeval{0\LTEM>0}=1}{%
+			\ifthenelse{\fpeval{0\LTEM < 400000000}=1}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\LTEMRel,0.75em) node[pos=.5] { };
+					\node[anchor=south west] at  ($(\LTEMRel,0) + (1ex,0)$) {\scriptsize\LTEMTable};
+				\end{tikzpicture}%
+			}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\LTEMRel,0.75em) node[pos=.5] { \scriptsize \LTEMTable };
+				\end{tikzpicture}%
+			}%
+		}{}%
+		
+		&
+		
+		\ifthenelse{\fpeval{0\fiveG>0}=1}{%
+			\ifthenelse{\fpeval{0\fiveG < 90000000}=1}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\fiveGRel,0.75em) node[pos=.5] { };
+					\node[anchor=south west] at  ($(\fiveGRel,0) + (1ex,0)$) {\scriptsize\fiveGTable};
+				\end{tikzpicture}%
+			}{%
+				\begin{tikzpicture}[outer sep=0, inner sep=0,every node/.style={{inner sep=0,outer sep=0}}]
+					\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (\fiveGRel,0.75em) node[pos=.5] { \scriptsize \fiveGTable };
+				\end{tikzpicture}%
+			}%
+		}{}%
+		
+		
+	}
+
+	\bottomrule
+
+	% \multicolumn{6}{l}{
+	%
+	% 	Legend:
+	%
+	% 	\textbf{Pre-Quantum} \quad
+	%
+	% 	\begin{tikzpicture}
+	% 		\node at (0,0) { };
+	%
+	% 		\draw [draw=black,fill=\ColorChSh] (0,0) rectangle ++ (-1em,-1em) ;
+	% 	\end{tikzpicture}
+	%
+	% 	CH $\rightarrow$ SH  \quad
+	%
+	% 	\begin{tikzpicture}
+	% 		\draw [draw=black,fill=\ColorShCf] (0,0) rectangle ++ (1em,1em) ;
+	% 	\end{tikzpicture}
+	% 	~%
+	%  SH $\rightarrow$ Client Finished
+	% }\\
+
+\end{tabular}
+\end{document}

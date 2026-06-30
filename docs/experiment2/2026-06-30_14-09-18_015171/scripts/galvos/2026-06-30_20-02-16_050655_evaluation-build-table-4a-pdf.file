@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+
+cd /root/evaluation-table-4a
+
+make
+
+pos_upload table-4a-kem.pdf
+
+echo "Table 4a PDF built and uploaded ($(date))"

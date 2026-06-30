@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+
+NUM_CORES=$(pos_get_variable num_cores)
+
+mkdir -p /root/sniffer-results
+chmod 0755 /root/sniffer-results
+cd /root/sniffer-results
+
+echo "Processing PCAPs using ${NUM_CORES} cores ($(date))"
+
+env --chdir /var/lib/postgresql setpriv --init-groups --reuid postgres -- createuser -s root || true
+
+parallel -j "$NUM_CORES" "dropdb --if-exists root{%}; createdb root{%}; export PGDATABASE=root{%}; /root/evaluation-pcap-analysis/import.sh {}; /root/evaluation-pcap-analysis/analysis.sh {}" ::: /root/sniffer-raw/pcaps/latencies-pre*.pcap.zst

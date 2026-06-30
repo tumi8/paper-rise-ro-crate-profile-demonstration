@@ -1,0 +1,5 @@
+{
+  "tc": "rate 1mbit",
+  "kem_alg": "kyber90s1024",
+  "sig_alg": "rsa:2048"
+}

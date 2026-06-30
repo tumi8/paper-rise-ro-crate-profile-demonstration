@@ -1,0 +1,34 @@
+cff-version: 1.2.0
+message: If you use this work, please cite it using the metadata below.
+type: dataset
+title: 'RISE Demonstration Experiment 2: Reproduction of Post-Quantum TLS 1.3 Measurements'
+abstract: 'This demonstration experiment reproduced a measurement from the paper "The
+  Performance of Post-Quantum TLS 1.3" by Sosnowski et al. (DOI: 10.1145/3624354.3630585),
+  which was presented at the CoNEXT''23 conference. Specifically, Table 4a was reproduced
+  using the public evaluation artifacts. This table shows the median handshake latency
+  for varying key encapsulation mechanisms (KEMs) under different network scenarios.
+  Further explanation can be found in the original publication.'
+date-released: '2026-06-30'
+authors:
+- given-names: Eric
+  family-names: Hauser
+  orcid: https://orcid.org/0000-0002-5378-3905
+  affiliation: Technical University of Munich
+- given-names: Markus
+  family-names: Sosnowski
+  orcid: https://orcid.org/0000-0002-7322-5804
+  affiliation: Technical University of Munich
+- given-names: Florian
+  family-names: Wiedner
+  orcid: https://orcid.org/0000-0003-2471-9864
+  affiliation: Technical University of Munich
+keywords:
+- post-quantom cryptography
+- TLS
+- measurement
+- handshake
+- latency
+- NetEm
+- LTE
+- 5G
+license: CC-BY-SA-4.0

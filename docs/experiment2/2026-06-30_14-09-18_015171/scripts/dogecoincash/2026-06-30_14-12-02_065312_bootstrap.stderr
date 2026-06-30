@@ -1,0 +1,13 @@
+[root] [DEBUG] pos_server: http://172.16.128.1:5555
+[root] [INFO] Start bootstrapping host: 2026-06-30 14:12:02
+[root] [DEBUG] fetching allocation data from: http://172.16.128.1:5555/allocations/get/dogecoincash
+[root] [INFO] Finished setting up variables: 2026-06-30 14:12:02
+[root] [DEBUG] downloading postools from: http://172.16.128.1:5555/files/pos-tools-v2.tar.gz
+[root] [INFO] pip not installed: [Errno 2] No such file or directory: 'pip'
+[root] [INFO] pip3 not installed: [Errno 2] No such file or directory: 'pip3'
+[root] [INFO] Finished setting up postools: 2026-06-30 14:12:03
+[root] [INFO] Adding FQDN dogecoincash.blockchain.net.cit.tum.de to /etc/hosts.
+[root] [INFO] Finished adding FQDN to /etc/hosts.
+[root] [INFO] Clearing ssh public keys from authorized keys file: 2026-06-30 14:12:03
+[root] [INFO] Adding an ssh public key to authorized keys file: 2026-06-30 14:12:03
+[root] [INFO] Adding public key

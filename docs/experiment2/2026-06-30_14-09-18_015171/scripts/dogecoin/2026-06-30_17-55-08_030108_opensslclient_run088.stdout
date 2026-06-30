@@ -1,0 +1,5 @@
+Collecting connection statistics for 15 seconds
+*****
+
+5 connections in 0.00s; inf connections/user sec, bytes read 33945
+5 connections in 16 real seconds, 6789 bytes read per connection

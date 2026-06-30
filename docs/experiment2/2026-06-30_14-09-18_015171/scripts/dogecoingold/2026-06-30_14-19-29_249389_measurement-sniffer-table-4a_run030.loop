@@ -1,0 +1,5 @@
+{
+  "tc": "loss 10%",
+  "kem_alg": "p256_hqc128",
+  "sig_alg": "rsa:2048"
+}
