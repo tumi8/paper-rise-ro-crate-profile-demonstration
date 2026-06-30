@@ -1,0 +1,26 @@
+{
+    "tallinn.baltikum.net.cit.tum.de": [
+        {
+            "inf_a": "enp2s0f0",
+            "inf_b": "enp2s0f0",
+            "mac_a": "b4:96:91:43:4c:c0",
+            "mac_b": "a0:36:9f:3b:6d:50",
+            "type": "link",
+            "properties": {
+                "speed": "10GbaseT - Four-pair Category 6A or better, full duplex mode only",
+                "device_b": "server"
+            }
+        },
+        {
+            "inf_a": "enp2s0f1",
+            "inf_b": "enp2s0f1",
+            "mac_a": "b4:96:91:43:4c:c1",
+            "mac_b": "a0:36:9f:3b:6d:52",
+            "type": "link",
+            "properties": {
+                "speed": "10GbaseT - Four-pair Category 6A or better, full duplex mode only",
+                "device_b": "server"
+            }
+        }
+    ]
+}

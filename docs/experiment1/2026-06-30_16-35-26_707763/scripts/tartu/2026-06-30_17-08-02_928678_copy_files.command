@@ -1,0 +1,1 @@
+scp -r /srv/testbed/results/warmuth/default/2026-06-30_16-35-26_707763/files tartu.baltikum.net.cit.tum.de:/root/evaluation

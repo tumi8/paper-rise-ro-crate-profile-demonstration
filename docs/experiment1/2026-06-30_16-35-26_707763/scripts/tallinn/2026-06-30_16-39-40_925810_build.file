@@ -1,0 +1,237 @@
+#!/bin/bash
+
+set -euo pipefail
+
+QUICHE_REPO=https://github.com/cloudflare/quiche.git
+QUICHE_TAG=0.23.2
+
+TQUIC_REPO=https://github.com/Tencent/tquic.git
+TQUIC_TAG=v1.6.0
+
+AIOQUIC_REPO=https://github.com/aiortc/aioquic.git
+AIOQUIC_TAG=1.2.0
+
+QUICGO_REPO=https://github.com/quic-go/quic-go.git
+QUICGO_TAG=v0.50.1
+
+BORINGSSL_REPO_URL=https://boringssl.googlesource.com/boringssl
+BORINGSSL_TAG=0.20250212.0
+
+LSQUIC_REPO_URL=https://github.com/litespeedtech/lsquic.git
+LSQUIC_TAG=v4.2.0
+
+PICOQUIC_REPO_URL=https://github.com/private-octopus/picoquic.git
+PICOQUIC_COMMIT=80ec1f24dbc24eedbf4cb7e276860b7a11888664
+
+GO_VERSION=1.24.0
+
+git_clone_retry() {
+    local repo=$1
+    local dest=$2
+    local attempts=${GIT_CLONE_ATTEMPTS:-5}
+    local delay=5
+
+    for attempt in $(seq 1 "$attempts"); do
+        if [ -d "$dest/.git" ]; then
+            return 0
+        fi
+
+        if [ -e "$dest" ]; then
+            echo "Removing incomplete clone at $dest"
+            rm -rf -- "$dest"
+        fi
+
+        echo "Cloning $repo into $dest (attempt $attempt/$attempts)..."
+        if git -c http.version="${GIT_HTTP_VERSION:-HTTP/1.1}" clone "$repo" "$dest"; then
+            return 0
+        fi
+
+        if [ "$attempt" -lt "$attempts" ]; then
+            echo "Clone failed; retrying in ${delay}s..."
+            sleep "$delay"
+            delay=$((delay * 2))
+        fi
+    done
+
+    echo "Failed to clone $repo into $dest after $attempts attempts" >&2
+    return 1
+}
+
+apt_update_retry() {
+    local attempts=${APT_UPDATE_ATTEMPTS:-3}
+    local delay=10
+
+    for attempt in $(seq 1 "$attempts"); do
+        echo "Updating apt metadata (attempt $attempt/$attempts)..."
+        if apt-get \
+            -o Acquire::Retries=3 \
+            -o Acquire::Check-Date=false \
+            update; then
+            return 0
+        fi
+
+        if [ "$attempt" -lt "$attempts" ]; then
+            echo "apt-get update failed; retrying in ${delay}s..."
+            sleep "$delay"
+            delay=$((delay * 2))
+        fi
+    done
+
+    echo "apt-get update failed after $attempts attempts" >&2
+    return 1
+}
+
+if ! command -v cargo &> /dev/null; then
+    echo "Rust not found, installing..."
+    curl --proto '=https' --tlsv1.2 -sSf -o /tmp/rustup-init.sh https://sh.rustup.rs
+    chmod +x /tmp/rustup-init.sh
+    /tmp/rustup-init.sh -q -y --default-toolchain stable
+    source $HOME/.cargo/env
+else
+    echo "Rust is already installed. Skipping installation."
+fi
+
+if ! command -v go &> /dev/null; then
+    echo "Go not found, installing..."
+    GO_PLATFORM=$(uname -s | tr '[:upper:]' '[:lower:]')-$(dpkg --print-architecture)
+    GO_DOWNLOAD_FILENAME=go$GO_VERSION.$GO_PLATFORM.tar.gz
+    wget https://go.dev/dl/$GO_DOWNLOAD_FILENAME
+    tar -zxvf $GO_DOWNLOAD_FILENAME -C /usr/local/
+    rm $GO_DOWNLOAD_FILENAME
+    echo "export PATH=/usr/local/go/bin:${PATH}" | tee /etc/profile.d/go.sh
+    source /etc/profile.d/go.sh
+else
+    echo "Go is already installed. Skipping installation."
+fi
+
+if [ ! -f "lsquic-client" ] || [ ! -f "lsquic-server" ]; then
+    echo "Building lsquic..."
+    mkdir -p build
+
+    apt_update_retry
+    apt-get install -y build-essential cmake software-properties-common \
+                    zlib1g-dev libevent-dev
+
+    pushd build
+
+    if [ ! -d "boringssl/.git" ]; then
+        git_clone_retry "$BORINGSSL_REPO_URL" boringssl
+    fi
+    pushd boringssl
+    git checkout $BORINGSSL_TAG
+    cmake -DCMAKE_BUILD_TYPE=Release .
+    make -j16 ssl crypto
+    popd
+
+    if [ ! -d "lsquic/.git" ]; then
+        git_clone_retry "$LSQUIC_REPO_URL" lsquic
+    fi
+    pushd lsquic
+    git checkout $LSQUIC_TAG
+    git submodule update --init --recursive
+    cmake -DCMAKE_BUILD_TYPE=Release -DBORINGSSL_DIR=../boringssl .
+    make -j16
+    popd
+
+    popd
+
+    rm -rf build/boringssl/
+else
+    echo "lsquic already built. Skipping build."
+fi
+
+if [ ! -f "picoquicdemo" ]; then
+    echo "Building picoquic..."
+    mkdir -p build
+
+    apt_update_retry
+    apt-get install -y openssl libssl-dev
+
+    pushd build
+
+    if [ ! -d "picoquic/.git" ]; then
+        git_clone_retry "$PICOQUIC_REPO_URL" picoquic
+    fi
+    pushd picoquic
+    git checkout $PICOQUIC_COMMIT
+    cmake -DPICOQUIC_FETCH_PTLS=Y .
+    make
+    popd
+
+    popd
+else
+    echo "picoquic already built. Skipping build."
+fi
+
+if [ ! -f "quic-go-client" ] || [ ! -f "quic-go-server" ]; then
+    echo "Building quic-go..."
+    mkdir -p build
+
+    if [ ! -d "build/quic-go/.git" ]; then
+        git_clone_retry "$QUICGO_REPO" build/quic-go
+    fi
+    pushd build/quic-go
+    git checkout $QUICGO_TAG
+    wget -O quic-go_use-env-vars.patch https://raw.githubusercontent.com/marte-paper/patches/refs/heads/main/quic-go_use-env-vars.patch
+    if git apply --reverse --check quic-go_use-env-vars.patch; then
+        echo "quic-go patch already applied. Continuing."
+    else
+        git apply quic-go_use-env-vars.patch
+    fi
+    go get ./...
+    go build -o quic-go-server -ldflags="-X github.com/quic-go/quic-go/qlog.quicGoVersion=$(git describe --always --long --dirty)" interop/server/main.go
+    go build -o quic-go-client -ldflags="-X github.com/quic-go/quic-go/qlog.quicGoVersion=$(git describe --always --long --dirty)" interop/client/main.go
+    popd
+else
+    echo "quic-go already built. Skipping build."
+fi
+
+if [ ! -f "build/quiche/target/release/quiche-client" ] || [ ! -f "build/quiche/target/release/quiche-server" ]; then
+    echo "Building quiche..."
+    mkdir -p build
+    if [ ! -d "build/quiche/.git" ]; then
+        git_clone_retry "$QUICHE_REPO" build/quiche
+    fi
+    pushd build/quiche
+    git checkout $QUICHE_TAG
+    git submodule update --init --recursive
+    cargo build --release
+    popd
+else
+    echo "quiche already built. Skipping build."
+fi
+
+if [ ! -f "build/tquic/target/release/tquic_client" ] || [ ! -f "build/tquic/target/release/tquic_server" ]; then
+    echo "Building tquic..."
+    mkdir -p build
+    if [ ! -d "build/tquic/.git" ]; then
+        git_clone_retry "$TQUIC_REPO" build/tquic
+    fi
+    pushd build/tquic
+    git checkout $TQUIC_TAG
+    git submodule update --init --recursive
+    cargo build --release --all
+    popd
+else
+    echo "tquic already built. Skipping build."
+fi
+
+cp build/quiche/target/release/quiche-client .
+cp build/quiche/target/release/quiche-server .
+cp build/tquic/target/release/tquic_client .
+cp build/tquic/target/release/tquic_server .
+cp build/quic-go/quic-go-client .
+cp build/quic-go/quic-go-server .
+cp build/lsquic/bin/http_client lsquic-client
+cp build/lsquic/bin/http_server lsquic-server
+#cp build/picoquic/picoquicdemo .
+
+echo "Preparing aioquic..."
+if [ ! -d "build/aioquic/.git" ]; then
+    git_clone_retry "$AIOQUIC_REPO" build/aioquic
+fi
+git -C build/aioquic checkout $AIOQUIC_TAG
+git -C build/aioquic submodule update --init --recursive
+apt_update_retry
+apt-get install -y libssl-dev libffi-dev
+pip3 install --break-system-packages build/aioquic jinja2 starlette wsproto

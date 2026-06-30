@@ -1,0 +1,85 @@
+{
+    "loop": {
+        "filesize": [
+            536870912
+        ],
+        "implementation": [
+            "quiche",
+            "lsquic",
+            "picoquic"
+        ],
+        "bandwidth_limit": [
+            "250mbit",
+            "500mbit",
+            "750mbit",
+            "1000mbit",
+            "1250mbit",
+            "1500mbit",
+            "1750mbit",
+            "2000mbit"
+        ],
+        "repetition": [
+            1,
+            2,
+            3
+        ]
+    },
+    "tartu": {},
+    "global": {
+        "nodes": {
+            "tallinn": {
+                "image": "debian-bookworm",
+                "role": "server",
+                "hostname": "server",
+                "interfaces": [
+                    {
+                        "name": "enp2s0f0",
+                        "ip": "10.0.0.2/24"
+                    }
+                ]
+            },
+            "tartu": {
+                "image": "debian-bookworm",
+                "role": "client",
+                "hostname": "client",
+                "interfaces": [
+                    {
+                        "name": "enp2s0f0",
+                        "ip": "10.0.0.1/24"
+                    }
+                ]
+            }
+        },
+        "metadata": {
+            "enabled": true,
+            "title": "RISE Demonstration Experiment 1: Performance Evaluation of Three QUIC Implementations",
+            "description": "This demonstration experiment evaluated the performance of the QUIC implementations 'quiche', 'lsquic', and 'picoquic'. For the measurement, we used the SLICES RI with the two experiment nodes 'tartu' as client and 'tallinn' as server. The goodput was measured for different configured bandwidths with 3 repetitions per combination.",
+            "keywords": [
+                "quic",
+                "measurement",
+                "performance",
+                "goodput",
+                "quiche",
+                "lsquic",
+                "picoquic"
+            ],
+            "authors": [
+                {
+                    "user_id": "kempfm",
+                    "roles": [
+                        "Investigation",
+                        "Conceptualization",
+                        "Software"
+                    ]
+                },
+                {
+                    "user_id": "erhauser",
+                    "roles": [
+                        "Investigation"
+                    ]
+                }
+            ]
+        }
+    },
+    "tallinn": {}
+}

@@ -1,0 +1,1 @@
+['ip', 'link', 'set', 'enp2s0f0', 'up']

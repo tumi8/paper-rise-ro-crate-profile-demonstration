@@ -1,0 +1,153 @@
+#!/bin/bash
+
+set -ex
+
+FILESIZE=$(pos_get_variable --from-loop filesize)
+IMPLEMENTATION=$(pos_get_variable --from-loop implementation)
+BW_LIMIT=$(pos_get_variable --from-loop bandwidth_limit)
+HOSTNAME=$(hostname)
+IFNAME=$(pos_get_variable --from-global nodes/$HOSTNAME/interfaces | grep -oP "'name': '\K[^']+" | head -1)
+IP=$(pos_get_variable --from-global nodes/$HOSTNAME/interfaces | grep -oP "'ip': '\K[^']+" | head -1 | cut -d'/' -f1)
+PORT=4433
+LISTEN_ADDR=$IP:$PORT
+WWW_DIR=/root/www
+TESTFILE=$WWW_DIR/testfile
+CERT_DIR=/root/certs
+LOG_DIR=/root/logs
+SSLKEYLOGFILE=$LOG_DIR/keys.log
+
+VALID_IMPLS=("quiche" "tquic" "lsquic" "picoquic" "aioquic" "quic-go")
+DEFAULT_IMPL="quiche"
+if [[ ! " ${VALID_IMPLS[@]} " =~ " ${IMPLEMENTATION} " ]]; then
+    IMPLEMENTATION="$DEFAULT_IMPL"
+    echo "Invalid implementation specified. Defaulting to $DEFAULT_IMPL."
+fi
+
+mkdir -p $WWW_DIR
+mkdir -p $CERT_DIR
+mkdir -p $LOG_DIR
+
+echo "Creating file of size $FILESIZE..."
+touch $TESTFILE && shred -n 1 -s $FILESIZE $TESTFILE
+
+echo "Creating certificate..."
+openssl req -x509 -newkey rsa:2048 -nodes -keyout $CERT_DIR/priv.key -out $CERT_DIR/cert.crt -days 365 -subj "/CN=server"
+cat $CERT_DIR/priv.key $CERT_DIR/cert.crt > $CERT_DIR/cert.pem
+
+if [[ -n "$BW_LIMIT" && "$BW_LIMIT" != "-1" ]]; then
+    echo "Applying bandwidth limit ($BW_LIMIT)..."
+    tc qdisc add dev $IFNAME root tbf rate $BW_LIMIT latency 50ms burst 1540
+fi
+
+echo "Starting server..."
+
+pos_energy_start --loop --filename "server_measurement" || echo "Warning: pos energy not available" >&2
+
+if [ -n "$IMPLEMENTATION" ]; then
+    case "$IMPLEMENTATION" in
+        "quiche")
+            /root/quiche-server \
+                --cc-algorithm cubic \
+                --listen $LISTEN_ADDR \
+                --root $WWW_DIR \
+                --no-retry \
+                --cert $CERT_DIR/cert.pem \
+                --key $CERT_DIR/priv.key &
+            ;;
+        "tquic")
+            /root/tquic_server \
+                -r $WWW_DIR \
+                -c $CERT_DIR/cert.pem \
+                -k $CERT_DIR/priv.key \
+                --congestion-control-algor cubic \
+                -l $LISTEN_ADDR &
+            ;;
+        "lsquic")
+            /root/lsquic-server \
+                -s $LISTEN_ADDR \
+                -r $WWW_DIR \
+                -c server,$CERT_DIR/cert.pem,$CERT_DIR/priv.key \
+                -G $LOG_DIR &
+            ;;
+        "picoquic")
+            pushd build/picoquic
+            ./picoquicdemo \
+                -w $WWW_DIR \
+                -p $PORT \
+                -c $CERT_DIR/cert.pem \
+                -k $CERT_DIR/priv.key \
+                -G cubic &
+            popd
+            ;;
+        "quic-go")
+            IP=$IP PORT=$PORT LOG_DIR=$LOG_DIR WWW_DIR=$WWW_DIR CERT_DIR=$CERT_DIR TESTCASE=transfer /root/quic-go-server &
+            ;;
+        "aioquic")
+            export STATIC_ROOT=$WWW_DIR
+            echo "Running $(python --version)"
+            python3 build/aioquic/examples/http3_server.py \
+                --certificate $CERT_DIR/cert.pem \
+                --port $PORT \
+                --private-key $CERT_DIR/priv.key \
+                --secrets-log $SSLKEYLOGFILE 2>> $LOG_DIR/aioquic.stderr 1>> $LOG_DIR/aioquic.stdout &
+            ;;
+        *)
+            echo "Unknown implementation ($IMPLEMENTATION). This should never happen!"
+            exit 1
+            ;;
+    esac
+fi
+
+sleep 1
+
+echo "Server ready, telling client..."
+
+pos_sync --tag "server_ready"
+
+echo "Client started, waiting for client to finish..."
+
+pos_sync --tag "client_finished"
+
+echo "Client finished, killing server and cleaning up..."
+
+if [ -n "$IMPLEMENTATION" ]; then
+    case "$IMPLEMENTATION" in
+        "quiche")
+            pkill -f quiche-server
+            ;;
+        "tquic")
+            pkill -f tquic_server
+            ;;
+        "lsquic")
+            pkill -f lsquic-server
+            ;;
+        "picoquic")
+            pkill -f picoquicdemo
+            ;;
+        "aioquic")
+            pkill -f http3_server.py
+            ;;
+        "quic-go")
+            pkill -f quic-go-server
+            ;;
+        *)
+            exit 1
+            ;;
+    esac
+fi
+
+if [[ -n "$BW_LIMIT" && "$BW_LIMIT" != "-1" ]]; then
+    tc qdisc del dev $IFNAME root
+fi
+
+([ -f $TESTFILE ] && sha1sum $TESTFILE | awk '{print $1}' || echo invalid) >> $LOG_DIR/hash.txt
+
+pos_energy_stop || echo "Warning: pos energy not available" >&2
+
+pos_upload -f -l -t 30 -o logs -r $LOG_DIR
+
+echo "Server terminating..."
+
+rm -r $WWW_DIR || true
+rm -r $CERT_DIR || true
+rm -r $LOG_DIR || true

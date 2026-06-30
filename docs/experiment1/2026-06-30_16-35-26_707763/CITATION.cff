@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+message: If you use this work, please cite it using the metadata below.
+type: dataset
+title: 'RISE Demonstration Experiment 1: Performance Evaluation of Three QUIC Implementations'
+abstract: This demonstration experiment evaluated the performance of the QUIC implementations
+  'quiche', 'lsquic', and 'picoquic'. For the measurement, we used the SLICES RI with
+  the two experiment nodes 'tartu' as client and 'tallinn' as server. The goodput
+  was measured for different configured bandwidths with 3 repetitions per combination.
+date-released: '2026-06-30'
+authors:
+- given-names: Kilian
+  family-names: Warmuth
+  orcid: https://orcid.org/0000-0001-6328-1047
+  affiliation: Technical University of Munich
+- given-names: Marcel
+  family-names: Kempf
+  orcid: https://orcid.org/0000-0001-7540-776X
+  affiliation: Technical University of Munich
+- given-names: Eric
+  family-names: Hauser
+  orcid: https://orcid.org/0000-0002-5378-3905
+  affiliation: Technical University of Munich
+keywords:
+- quic
+- measurement
+- performance
+- goodput
+- quiche
+- lsquic
+- picoquic
+license: CC-BY-SA-4.0
+identifiers:
+- type: doi
+  value: 10.5281/zenodo.21073950
+  description: Publication

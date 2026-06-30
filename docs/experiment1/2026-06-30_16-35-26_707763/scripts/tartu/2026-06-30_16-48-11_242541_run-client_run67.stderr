@@ -1,0 +1,49 @@
+++ hostname
++ HOSTNAME=tartu
+++ pos_get_variable --from-loop implementation
++ IMPLEMENTATION=picoquic
+++ pos_get_variable --from-global nodes/tartu/interfaces
+++ grep -oP ''\''name'\'': '\''\K[^'\'']+'
+++ head -1
++ IFNAME=enp2s0f0
++ DL_DIR=/root/downloads
++ LOG_DIR=/root/logs
++ DLPATH=/testfile
++ REQ=https://server:4433/testfile
++ SSLKEYLOGFILE=/root/logs/keys.log
++ VALID_IMPLS=("quiche" "tquic" "lsquic" "picoquic" "aioquic" "quic-go")
++ DEFAULT_IMPL=quiche
++ [[ !  quiche tquic lsquic picoquic aioquic quic-go  =~  picoquic  ]]
++ mkdir -p /root/downloads
++ mkdir -p /root/logs
++ echo 'Client started, waiting for server to be ready...'
++ pos_sync --tag server_ready
++ echo 'Server ready, starting client...'
+++ date +%s%N
++ start=1782832017703937646
++ pos_energy_start --loop --filename client_measurement
+2026-06-30 17:06:57,946 ERROR    Unable to POST url: "http://172.16.0.1:5556/nodes/energy_start/tartu".
+400 Bad Request: Node does not provide energy measurements
++ echo 'Warning: pos energy not available'
+Warning: pos energy not available
++ '[' -n picoquic ']'
++ case "$IMPLEMENTATION" in
++ pushd build/picoquic
++ ./picoquicdemo -o /root/downloads -G cubic server 4433 /testfile
+++ date +%s%N
++ end=1782832022818664852
++ echo '{"start":' 1782832017703937646, '"end":' '1782832022818664852}'
++ echo 'Client finished, telling server...'
++ pos_sync --tag client_finished
++ TESTFILE=/root/downloads/testfile
++ '[' -f /root/downloads/testfile ']'
++ sha1sum /root/downloads/testfile
++ awk '{print $1}'
++ pos_energy_stop
+2026-06-30 17:07:04,727 ERROR    Unable to POST url: "http://172.16.0.1:5556/nodes/energy_stop/tartu".
+400 Bad Request: Node does not provide energy measurements
++ echo 'Warning: pos energy not available'
+Warning: pos energy not available
++ pos_upload -f -l -t 30 -o logs -r /root/logs
++ rm -r /root/downloads
++ rm -r /root/logs

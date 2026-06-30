@@ -1,0 +1,6 @@
+{
+  "filesize": 536870912,
+  "repetition": 1,
+  "implementation": "lsquic",
+  "bandwidth_limit": "1250mbit"
+}

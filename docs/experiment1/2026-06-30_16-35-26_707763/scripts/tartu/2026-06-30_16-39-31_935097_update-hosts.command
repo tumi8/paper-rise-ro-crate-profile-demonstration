@@ -1,0 +1,1 @@
+['bash', '-c', 'echo 10.0.0.2 server >> /etc/hosts']

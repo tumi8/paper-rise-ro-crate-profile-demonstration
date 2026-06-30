@@ -1,0 +1,49 @@
+Client started, waiting for server to be ready...
+Server ready, starting client...
+~/build/picoquic ~
+Starting Picoquic (v1.1.33.0) connection to server = server, port = 4433
+Set ALPN to h3 based on stored ticket
+Set version to 0x00000001 based on stored ticket
+Testing scenario: </testfile>
+Max stream id bidir remote before start = 0 (0)
+Starting client connection. Version = 1, I-CID: fdda5cc66b5ab2ce
+Max stream id bidir remote after start = 2044 (512)
+Max stream id bidir remote after 0rtt = 2044 (512)
+Opening stream 0 to GET /testfile
+Waiting for packets.
+Client port (AF=2): 18839.
+Negotiated ALPN: h3
+Almost ready!
+
+Connection established. Version = 1, I-CID: fdda5cc66b5ab2ce, verified: 1
+Stream 0 ended after 536870912 bytes
+All done, Closing the connection.
+Received a request to close the connection.
+The connection is closed!
+Out of 1 zero RTT packets, 0 were acked by the server.
+Address Discovery mode: 0 / 0 (0:0)
+Quic Bit was greased by the client.
+Quic Bit was greased by the server.
+ECN was received (ect0: 0, ect1: 381861, ce: 0).
+ECN was acknowledged (ect0: 0, ect1: 10780, ce: 0).
+Received 536870948 bytes in 4.237129 seconds, 1013.650418 Mbps.
+Sent 49 bytes in 4.237129 seconds, 0.000093 Mbps.
+max_data_local: 1613758464
+max_stream_data_local: 1610616336
+max_data_remote: 1048576
+max_stream_data_remote: 0
+ack_delay_remote: 1000 ... 1000
+max_ack_gap_remote: 32
+ack_delay_local: 1000 ... 25000
+max_ack_gap_local: 6
+max_mtu_sent: 1252
+max_mtu_received: 1440
+System call duration max: 32
+System call duration smoothed: 0
+System call duration deviation: 0
+Received ticket from server (h3):
+ticket time = 1782831658650, kx = 17, suite = 1301, 120 ticket, 32 secret.
+lifetime = 100000, age_add = cdacc85b, 0 nonce, 99 ticket, 8 extensions.
+ticket extensions: 42(ED: ffffffff),
+Client exit with code = 0
+Client finished, telling server...

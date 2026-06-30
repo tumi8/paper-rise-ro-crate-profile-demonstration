@@ -1,0 +1,77 @@
+++ pos_get_variable --from-loop filesize
++ FILESIZE=536870912
+++ pos_get_variable --from-loop implementation
++ IMPLEMENTATION=quiche
+++ pos_get_variable --from-loop bandwidth_limit
++ BW_LIMIT=2000mbit
+++ hostname
++ HOSTNAME=tallinn
+++ pos_get_variable --from-global nodes/tallinn/interfaces
+++ grep -oP ''\''name'\'': '\''\K[^'\'']+'
+++ head -1
++ IFNAME=enp2s0f0
+++ pos_get_variable --from-global nodes/tallinn/interfaces
+++ grep -oP ''\''ip'\'': '\''\K[^'\'']+'
+++ cut -d/ -f1
+++ head -1
++ IP=10.0.0.2
++ PORT=4433
++ LISTEN_ADDR=10.0.0.2:4433
++ WWW_DIR=/root/www
++ TESTFILE=/root/www/testfile
++ CERT_DIR=/root/certs
++ LOG_DIR=/root/logs
++ SSLKEYLOGFILE=/root/logs/keys.log
++ VALID_IMPLS=("quiche" "tquic" "lsquic" "picoquic" "aioquic" "quic-go")
++ DEFAULT_IMPL=quiche
++ [[ !  quiche tquic lsquic picoquic aioquic quic-go  =~  quiche  ]]
++ mkdir -p /root/www
++ mkdir -p /root/certs
++ mkdir -p /root/logs
++ echo 'Creating file of size 536870912...'
++ touch /root/www/testfile
++ shred -n 1 -s 536870912 /root/www/testfile
++ echo 'Creating certificate...'
++ openssl req -x509 -newkey rsa:2048 -nodes -keyout /root/certs/priv.key -out /root/certs/cert.crt -days 365 -subj /CN=server
+.+......+.+.........+.....+...+.+..+...+....+...........+.......+..+.+.....+................+...........+...+.+......+...+..+...............+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*.+...+...+..+.+..+..........+...+........................+..+.........+......+....+.....+.......+...+..+....+...........+..........+..+......+.+...+..+...+............+.+.....+...+.+..............+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*.......+............+........+......+......+...+.......+..+...............+.+.........+...+.....+...+.........+......+......+.+............+........+..........+.................+...+.......+............+...+............+...+..+...+.......+....................+......+...+......+.+...+..+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+.......+.+..+......+.+.....+...+......+.........+.......+...+......+..+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*.....+..+......................+.....+......+...+............+.........+....+.........+..+.+...+......+........+.+......+...........+...+.+...+..+....+..............+...+...+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*........+.+..+....+...+...+..+...+.........+......+...+.......+..+.+........................+...........+....+..+...............+...+.+.....+.+...+..+.+..+...+..........+...+..+..........+.........+...+...............+........+.......+..................+.....+....+.....+.+..+...+.......+..+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-----
++ cat /root/certs/priv.key /root/certs/cert.crt
++ [[ -n 2000mbit ]]
++ [[ 2000mbit != \-\1 ]]
++ echo 'Applying bandwidth limit (2000mbit)...'
++ tc qdisc add dev enp2s0f0 root tbf rate 2000mbit latency 50ms burst 1540
++ echo 'Starting server...'
++ pos_energy_start --loop --filename server_measurement
+2026-06-30 16:56:43,451 ERROR    Unable to POST url: "http://172.16.0.1:5556/nodes/energy_start/tallinn".
+400 Bad Request: Node does not provide energy measurements
++ echo 'Warning: pos energy not available'
+Warning: pos energy not available
++ '[' -n quiche ']'
++ case "$IMPLEMENTATION" in
++ sleep 1
++ /root/quiche-server --cc-algorithm cubic --listen 10.0.0.2:4433 --root /root/www --no-retry --cert /root/certs/cert.pem --key /root/certs/priv.key
++ echo 'Server ready, telling client...'
++ pos_sync --tag server_ready
++ echo 'Client started, waiting for client to finish...'
++ pos_sync --tag client_finished
++ echo 'Client finished, killing server and cleaning up...'
++ '[' -n quiche ']'
++ case "$IMPLEMENTATION" in
++ pkill -f quiche-server
++ [[ -n 2000mbit ]]
++ [[ 2000mbit != \-\1 ]]
++ tc qdisc del dev enp2s0f0 root
++ '[' -f /root/www/testfile ']'
++ sha1sum /root/www/testfile
++ awk '{print $1}'
++ pos_energy_stop
+2026-06-30 16:56:50,161 ERROR    Unable to POST url: "http://172.16.0.1:5556/nodes/energy_stop/tallinn".
+400 Bad Request: Node does not provide energy measurements
++ echo 'Warning: pos energy not available'
+Warning: pos energy not available
++ pos_upload -f -l -t 30 -o logs -r /root/logs
++ echo 'Server terminating...'
++ rm -r /root/www
++ rm -r /root/certs
++ rm -r /root/logs

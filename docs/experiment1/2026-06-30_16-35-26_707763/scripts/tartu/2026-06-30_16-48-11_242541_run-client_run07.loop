@@ -1,0 +1,6 @@
+{
+  "filesize": 536870912,
+  "repetition": 1,
+  "implementation": "quiche",
+  "bandwidth_limit": "2000mbit"
+}

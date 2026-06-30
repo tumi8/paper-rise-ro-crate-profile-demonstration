@@ -1,0 +1,6 @@
+{
+  "filesize": 536870912,
+  "repetition": 3,
+  "implementation": "picoquic",
+  "bandwidth_limit": "1000mbit"
+}

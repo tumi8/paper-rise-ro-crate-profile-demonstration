@@ -1,0 +1,262 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import json
+import glob
+import statistics
+import subprocess
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.lines as mlines
+
+ColorBlack = "#000000"
+ColorRed = "#cf0000"
+ColorBlue = "#0091ff"
+ColorDarkerBlue = "#005fc6"
+ColorOrange = "#ff590d"
+ColorGreen = "#A3AD00"
+ColorGrey = "#b0b0b0"
+
+
+def rc_setting():
+    fontsize = 9
+    return {
+        "font.family": "serif",
+        "axes.labelsize": fontsize,
+        "font.size": fontsize,
+        "legend.fontsize": fontsize-1,
+        "xtick.labelsize": fontsize-1,
+        "ytick.labelsize": fontsize-1,
+        "axes.grid": True,
+        "axes.grid.axis": "y",
+        "grid.linestyle": "--",
+        "grid.linewidth": 0.5,
+        "grid.color": "b0b0b0b0",
+        "axes.axisbelow": True,
+        "legend.framealpha": 1,
+    }
+
+
+plt.rcParams.update(rc_setting())
+
+
+def plot_shades(label, ax, width, factor=1):
+    for i in range(len(label))[1::2]:
+        ax.axvspan(-width + factor * i, width + factor * i, alpha=0.3, color=ColorGrey, lw=0)
+
+
+def bandwidth_limit_grouped_boxplot(df, folder="/root", filename="plot", filetypes=["png", "pdf"]):
+
+    bw_keys = list(df.loop_bandwidth_limit.unique())
+    bw_vals = [x.replace("mbit", "").replace("-1", "No Limit") for x in bw_keys]
+    groups = dict(zip(bw_keys, bw_vals))
+
+    implementations = list(df.loop_implementation.unique())
+
+    colors = [ColorDarkerBlue, ColorOrange, ColorGreen, ColorBlack]
+    linestyles = ["-"] * len(colors)
+    markers = ["^", "o", "s", "D"]
+
+    def style(i):
+        a = 0.3 if len(implementations) > 1 else 0
+        b = 2*a/(len(implementations)-1)
+        return {
+            "showmeans": True,
+            "boxprops": dict(color=colors[i], linestyle=linestyles[i], facecolor="white"),
+            "capprops": dict(color=colors[i], alpha=0),
+            "whiskerprops": dict(alpha=0),
+            "flierprops": dict(color=colors[i], markeredgecolor=colors[i]),
+            "medianprops": dict(color=colors[i]),
+            "meanprops": dict(markerfacecolor=colors[i], markeredgecolor=colors[i], marker=markers[i]),
+            "whis": [5, 95],
+            "showfliers": False,
+            "widths": .15,
+            "positions": [x - a + b * i for x in range(len(groups))],
+            "patch_artist": True,
+        }
+
+    fig, ax1 = plt.subplots(figsize=(12, 6))
+    plot_shades(groups.values(), ax1, 0.5)
+
+    for idx, imp in enumerate(implementations):
+        d = df.loc[(df.loop_implementation == imp)]
+        ax1.boxplot([d[d.loop_bandwidth_limit == gk].goodput for gk in groups.keys()],
+                    tick_labels=groups.values(), **style(idx))
+
+    ax1.autoscale()
+
+    ax1.set(xticks=range(len(groups.values())), xticklabels=groups.values())
+
+    ax1.set_ylabel("Goodput [Mbit/s]")
+    ax1.set_xlabel("Bandwidth Limit [Mbit/s]")
+    max_goodput = df["goodput"].max()
+    ax1.set_ylim(0, max_goodput * 1.2)  # 20% Puffer nach oben
+    ax1.set_xlim(-.5, len(groups)-0.5)
+
+    legend_elements = [
+        mlines.Line2D([], [], color=colors[i], marker=markers[i], linestyle="None", label=imp)
+        for i, imp in enumerate(implementations)
+    ]
+    ax1.legend(handles=legend_elements, loc="lower right", ncol=2)
+
+    fig.tight_layout()
+    for format in filetypes:
+        fig.savefig(f"{folder}/{filename}.{format}", bbox_inches="tight", dpi=300)
+
+
+def main():
+    """Evaluate the experiment runs"""
+    result_folder = "/root/evaluation"
+
+    get_node_by_role_command = "pos_get_variable --from-global nodes | sed \"s/'/\\\"/g\" | " \
+                               "jq -e -r 'to_entries[] | select(.value.role == \"{role}\") | .key'"
+    client = subprocess.check_output(get_node_by_role_command.format(role="client"), shell=True).decode("utf-8").strip()
+    server = subprocess.check_output(get_node_by_role_command.format(role="server"), shell=True).decode("utf-8").strip()
+
+    script_dir = os.path.join(result_folder, "scripts")
+    files_dir = os.path.join(result_folder, "files")
+
+    runs_server = glob.glob(os.path.join(files_dir, server, "logs_run*"))
+    runs_client = glob.glob(os.path.join(files_dir, client, "logs_run*"))
+    if len(runs_server) != len(runs_client):
+        sys.stderr.write("Number of runs does not match for client and server!\n")
+    all_runs = sorted(set([x.split("_")[-1] for x in runs_server + runs_client]))
+
+    results = {"runs": []}
+
+    for run in all_runs:
+        sys.stdout.write(f"Evaluating {run}\n")
+        result = {}
+        if not os.path.exists(os.path.join(files_dir, client, "logs_" + run)):
+            sys.stderr.write(f"{run} not found in client, skipping\n")
+            continue
+        if not os.path.exists(os.path.join(files_dir, server, "logs_" + run)):
+            sys.stderr.write(f"{run} not found in server, skipping\n")
+            continue
+        result["run"] = run
+
+        for role, node in [("client", client), ("server", server)]:
+            with open(os.path.join(files_dir, node, "logs_" + run, "hash.txt"), "r") as f:
+                result["hash_"+role] = f.readline().strip()
+        result["success"] = result["hash_client"] == result["hash_server"]
+
+        with open(os.path.join(files_dir, client, "logs_" + run, "time.json"), "r") as f:
+            time = json.load(f)
+            result["time"] = time["end"] - time["start"]
+
+        with open(glob.glob(os.path.join(script_dir, client, "*_"+run+".loop"))[0], "r") as f:
+            vars = json.load(f)
+            for key, val in vars.items():
+                key = key if key == "repetition" else "loop_" + key
+                result[key] = val
+
+        seconds = (result["time"] / 1e9)
+        megabit = ((result["loop_filesize"] * 8) / 1e6)
+        result["goodput"] = megabit / seconds
+
+        results["runs"].append(result)
+
+    runs = results["runs"]
+
+    if len(runs) < 1:
+        sys.stderr.write("No runs found!\n")
+        return
+
+    results["combined"] = []
+    grouped = {}
+    group_by_attributes = [key for key in runs[0].keys() if key.startswith("loop_")]
+
+    for entry in runs:
+        group_key = tuple((key, entry[key]) for key in group_by_attributes)
+        if group_key not in grouped:
+            grouped[group_key] = []
+        grouped[group_key].append(entry)
+
+    for group_key, group in grouped.items():
+        res = {}
+        for key in group_key:
+            res[key[0]] = key[1]
+
+        res["repetitions"] = len(group)
+
+        res["succees_rate"] = "{:.2f}%".format(sum(x["success"] for x in group) / len(group) * 100)
+
+        time_values = [x["time"] / 1e6 for x in group]
+        time_mean = statistics.mean(time_values)
+        time_stdev = statistics.stdev(time_values) if len(time_values) > 1 else 0
+        res["time"] = "{:.2f} (± {:.2f}) {}".format(time_mean, time_stdev, "ms")
+
+        goodput_values = [x["goodput"] for x in group]
+        goodput_mean = statistics.mean(goodput_values)
+        goodput_stdev = statistics.stdev(goodput_values) if len(goodput_values) > 1 else 0
+        res["goodput"] = "{:.2f} (± {:.2f}) {}".format(goodput_mean, goodput_stdev, "Mbps")
+
+        results["combined"].append(res)
+
+    with open(os.path.join(files_dir, "results.json"), "w") as f:
+        json.dump(results, f, indent=4)
+    sys.stdout.write("Results written to results.json\n")
+
+    plot_filetypes = ["png", "pdf"]
+    df_runs = pd.DataFrame(runs)
+    bandwidth_limit_grouped_boxplot(df_runs, folder=files_dir, filename="plot1", filetypes=plot_filetypes)
+
+    generate_tsv_files_for_bandwidth_pgf_plot = True
+
+    if generate_tsv_files_for_bandwidth_pgf_plot:
+
+        all_tsv_files = []
+
+        exclude_unlimited = True
+        remove_bw_unit = True
+
+        def normalize_bw(val):
+            if isinstance(val, str) and val.endswith('mbit'):
+                return int(val.replace('mbit', ''))
+            try:
+                return int(val)
+            except Exception:
+                return None
+
+        successful = df_runs[df_runs['success']].copy()
+        if remove_bw_unit:
+            successful['loop_bandwidth_limit'] = successful['loop_bandwidth_limit'].apply(normalize_bw)
+        if exclude_unlimited:
+            successful = successful[successful['loop_bandwidth_limit'] != -1]
+        group_keys = successful[['loop_implementation', 'loop_filesize']].drop_duplicates()
+
+        for _, row in group_keys.iterrows():
+            impl = row['loop_implementation']
+            size = row['loop_filesize']
+
+            subset = successful[
+                (successful['loop_implementation'] == impl) &
+                (successful['loop_filesize'] == size)
+            ]
+
+            grouped = (
+                subset.groupby('loop_bandwidth_limit')['goodput']
+                .mean()
+                .reset_index()
+                .rename(columns={'goodput': 'mean_goodput'})
+                .sort_values(by='loop_bandwidth_limit')
+            )
+
+            filename = f"{impl}_{size}.tsv"
+            filepath = os.path.join(files_dir, filename)
+            all_tsv_files.append(filepath)
+            grouped.to_csv(filepath, sep="\t", index=False)
+
+        for tsv_file in all_tsv_files:
+            subprocess.Popen(["pos_upload", "-f", "-t", "10", tsv_file]).wait()
+
+    for format in plot_filetypes:
+        subprocess.Popen(["pos_upload", "-f", "-t", "10", os.path.join(files_dir, f"plot1.{format}")]).wait()
+
+    subprocess.Popen(["pos_upload", "-f", "-t", "10", os.path.join(files_dir, "results.json")]).wait()
+
+
+if __name__ == "__main__":
+    main()

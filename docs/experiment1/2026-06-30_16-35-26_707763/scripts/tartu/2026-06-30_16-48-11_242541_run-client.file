@@ -1,0 +1,115 @@
+#!/bin/bash
+
+set -ex
+
+HOSTNAME=$(hostname)
+IMPLEMENTATION=$(pos_get_variable --from-loop implementation)
+IFNAME=$(pos_get_variable --from-global nodes/$HOSTNAME/interfaces | grep -oP "'name': '\K[^']+" | head -1)
+DL_DIR=/root/downloads
+LOG_DIR=/root/logs
+DLPATH=/testfile
+REQ="https://server:4433$DLPATH"
+SSLKEYLOGFILE=$LOG_DIR/keys.log
+
+VALID_IMPLS=("quiche" "tquic" "lsquic" "picoquic" "aioquic" "quic-go")
+DEFAULT_IMPL="quiche"
+if [[ ! " ${VALID_IMPLS[@]} " =~ " ${IMPLEMENTATION} " ]]; then
+    IMPLEMENTATION="$DEFAULT_IMPL"
+    echo "Invalid implementation specified. Defaulting to $DEFAULT_IMPL."
+fi
+
+mkdir -p $DL_DIR
+mkdir -p $LOG_DIR
+
+echo "Client started, waiting for server to be ready..."
+
+pos_sync --tag "server_ready"
+
+echo "Server ready, starting client..."
+
+# Disabled to keep the demo artifact small
+# tcpdump -i $IFNAME -s 128 -U -w $LOG_DIR/trace.pcap > /dev/null &
+
+start=$(date +%s%N)
+
+pos_energy_start --loop --filename "client_measurement" || echo "Warning: pos energy not available" >&2
+
+if [ -n "$IMPLEMENTATION" ]; then
+    case "$IMPLEMENTATION" in
+        "quiche")
+            /root/quiche-client \
+                --cc-algorithm cubic \
+                --dump-responses $DL_DIR \
+                --no-verify \
+                $REQ
+            end=$(date +%s%N)
+            echo {\"start\": $start, \"end\": $end} > $LOG_DIR/time.json
+            ;;
+        "tquic")
+            /root/tquic_client \
+                --dump-dir $DL_DIR \
+                --congestion-control-algor cubic \
+                $REQ
+            end=$(date +%s%N)
+            echo {\"start\": $start, \"end\": $end} > $LOG_DIR/time.json
+            ;;
+        "lsquic")
+            /root/lsquic-client \
+                -p $DLPATH \
+                -7 $DL_DIR \
+                -H server \
+                -s server:4433 \
+                -G $LOG_DIR
+            end=$(date +%s%N)
+            echo {\"start\": $start, \"end\": $end} > $LOG_DIR/time.json
+            sed -i '1,3d' $DL_DIR$DLPATH
+            ;;
+        "picoquic")
+            pushd build/picoquic
+            ./picoquicdemo \
+                -o $DL_DIR \
+                -G cubic \
+                server \
+                4433 \
+                $DLPATH
+            end=$(date +%s%N)
+            echo {\"start\": $start, \"end\": $end} > $LOG_DIR/time.json
+            ;;
+        "quic-go")
+            LOG_DIR=$LOG_DIR DL_DIR=$DL_DIR TESTCASE=transfer /root/quic-go-client $REQ
+            end=$(date +%s%N)
+            echo {\"start\": $start, \"end\": $end} > $LOG_DIR/time.json
+            ;;
+        "aioquic")
+            echo "Running $(python --version)"
+            python3 build/aioquic/examples/http3_client.py \
+                --insecure \
+                --max-data 262144 \
+                --max-stream-data 262144 \
+                --output-dir $DL_DIR \
+                --secrets-log $SSLKEYLOGFILE \
+                $REQ 2>> $LOG_DIR/aioquic.stderr 1>> $LOG_DIR/aioquic.stdout
+            end=$(date +%s%N)
+            echo {\"start\": $start, \"end\": $end} > $LOG_DIR/time.json
+            ;;
+        *)
+            echo "Unknown implementation ($IMPLEMENTATION). This should never happen!"
+            exit 1
+            ;;
+    esac
+fi
+
+echo "Client finished, telling server..."
+
+pos_sync --tag "client_finished"
+
+#pkill -f tcpdump
+TESTFILE=$DL_DIR/testfile
+([ -f $TESTFILE ] && sha1sum $TESTFILE | awk '{print $1}' || echo invalid) >> $LOG_DIR/hash.txt
+
+pos_energy_stop || echo "Warning: pos energy not available" >&2
+
+pos_upload -f -l -t 30 -o logs -r $LOG_DIR
+
+rm -r $DL_DIR || true
+rm -r $LOG_DIR || true

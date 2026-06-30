@@ -1,0 +1,17 @@
+Get:1 http://mirror.lrz.de/debian bookworm InRelease [151 kB]
+Get:2 http://security.debian.org bookworm-security InRelease [48.0 kB]
+Get:3 http://mirror.lrz.de/debian bookworm/main amd64 Packages [8,790 kB]
+Get:4 http://security.debian.org bookworm-security/main amd64 Packages [313 kB]
+Get:5 http://security.debian.org bookworm-security/main Translation-en [194 kB]
+Get:6 http://security.debian.org bookworm-security/contrib amd64 Packages [896 B]
+Get:7 http://security.debian.org bookworm-security/contrib Translation-en [652 B]
+Get:8 http://security.debian.org bookworm-security/non-free-firmware amd64 Packages [688 B]
+Get:9 http://mirror.lrz.de/debian bookworm/main Translation-en [6,107 kB]
+Get:10 http://mirror.lrz.de/debian bookworm/contrib amd64 Packages [53.5 kB]
+Get:11 http://mirror.lrz.de/debian bookworm/contrib Translation-en [48.4 kB]
+Get:12 http://mirror.lrz.de/debian bookworm/non-free-firmware amd64 Packages [6,368 B]
+Get:13 http://mirror.lrz.de/debian bookworm/non-free-firmware Translation-en [20.9 kB]
+Get:14 http://mirror.lrz.de/debian bookworm/non-free amd64 Packages [102 kB]
+Get:15 http://mirror.lrz.de/debian bookworm/non-free Translation-en [68.2 kB]
+Fetched 15.9 MB in 2s (8,683 kB/s)
+Reading package lists...

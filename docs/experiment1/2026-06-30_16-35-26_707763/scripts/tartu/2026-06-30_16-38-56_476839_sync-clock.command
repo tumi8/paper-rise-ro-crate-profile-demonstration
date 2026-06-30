@@ -1,0 +1,1 @@
+['bash', '-lc', "timedatectl set-ntp false >/dev/null 2>&1 || true; date -u -s '@1782830336'"]

@@ -1,0 +1,80 @@
+++ pos_get_variable --from-loop filesize
++ FILESIZE=536870912
+++ pos_get_variable --from-loop implementation
++ IMPLEMENTATION=picoquic
+++ pos_get_variable --from-loop bandwidth_limit
++ BW_LIMIT=1750mbit
+++ hostname
++ HOSTNAME=tallinn
+++ pos_get_variable --from-global nodes/tallinn/interfaces
+++ grep -oP ''\''name'\'': '\''\K[^'\'']+'
+++ head -1
++ IFNAME=enp2s0f0
+++ pos_get_variable --from-global nodes/tallinn/interfaces
+++ grep -oP ''\''ip'\'': '\''\K[^'\'']+'
+++ head -1
+++ cut -d/ -f1
++ IP=10.0.0.2
++ PORT=4433
++ LISTEN_ADDR=10.0.0.2:4433
++ WWW_DIR=/root/www
++ TESTFILE=/root/www/testfile
++ CERT_DIR=/root/certs
++ LOG_DIR=/root/logs
++ SSLKEYLOGFILE=/root/logs/keys.log
++ VALID_IMPLS=("quiche" "tquic" "lsquic" "picoquic" "aioquic" "quic-go")
++ DEFAULT_IMPL=quiche
++ [[ !  quiche tquic lsquic picoquic aioquic quic-go  =~  picoquic  ]]
++ mkdir -p /root/www
++ mkdir -p /root/certs
++ mkdir -p /root/logs
++ echo 'Creating file of size 536870912...'
++ touch /root/www/testfile
++ shred -n 1 -s 536870912 /root/www/testfile
++ echo 'Creating certificate...'
++ openssl req -x509 -newkey rsa:2048 -nodes -keyout /root/certs/priv.key -out /root/certs/cert.crt -days 365 -subj /CN=server
+....+...+...+............+.+......+........+.+...........+...+...+.......+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*.........+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*...+.+........+.......+.....+....+.....+....+..+.+..+................+.....+....+............+...+......+.....+.+..............+.........+......+....+...+...+.....+.........+...+.......+...........+.+........+......+.+........+.+.....+.+.....+.+............+...+............+..+.........+.......+...+.........+..+...+...+..................+.+.....+...+......+.......+...+..+.......+...+..+..........+..+...............+.+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+........+......+...+..............+.+.........+........+............+...+....+...+..+.........+......+....+..+...+.+...+..+.........+....+...+.....+...+....+...+..+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*.+...+........+.+.........+.....+.........+.+.....................+.....+.+...+..+.......+.....+..................+.......+......+.....+.+...+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*...+.......+...........+...+......+...+...+....+...+..+.+........+......+......+.......+...............+........+...+..........+......+......+..+...+...+....+..+......+..................+............+............+.+..+.......+...+...+...........+....+......+...........+..........+........+.+.....+.+.....+...+............+............+......+.+...........+.......+..+.........+......+...+...+....+...+............+......+...............+.....+....+........+.+..............+............+.+..+.+......+...............+...........+...+.+...+......+.........+..+..........+........+......+.+...+......+..+.......+......+...........+.+...+.....+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-----
++ cat /root/certs/priv.key /root/certs/cert.crt
++ [[ -n 1750mbit ]]
++ [[ 1750mbit != \-\1 ]]
++ echo 'Applying bandwidth limit (1750mbit)...'
++ tc qdisc add dev enp2s0f0 root tbf rate 1750mbit latency 50ms burst 1540
++ echo 'Starting server...'
++ pos_energy_start --loop --filename server_measurement
+2026-06-30 17:00:56,473 ERROR    Unable to POST url: "http://172.16.0.1:5556/nodes/energy_start/tallinn".
+400 Bad Request: Node does not provide energy measurements
++ echo 'Warning: pos energy not available'
+Warning: pos energy not available
++ '[' -n picoquic ']'
++ case "$IMPLEMENTATION" in
++ pushd build/picoquic
++ popd
++ sleep 1
++ ./picoquicdemo -w /root/www -p 4433 -c /root/certs/cert.pem -k /root/certs/priv.key -G cubic
+No token file present. Will create one as <demo_token_store.bin>.
++ echo 'Server ready, telling client...'
++ pos_sync --tag server_ready
++ echo 'Client started, waiting for client to finish...'
++ pos_sync --tag client_finished
++ echo 'Client finished, killing server and cleaning up...'
++ '[' -n picoquic ']'
++ case "$IMPLEMENTATION" in
++ pkill -f picoquicdemo
++ [[ -n 1750mbit ]]
++ [[ 1750mbit != \-\1 ]]
++ tc qdisc del dev enp2s0f0 root
++ '[' -f /root/www/testfile ']'
++ sha1sum /root/www/testfile
++ awk '{print $1}'
++ pos_energy_stop
+2026-06-30 17:01:04,229 ERROR    Unable to POST url: "http://172.16.0.1:5556/nodes/energy_stop/tallinn".
+400 Bad Request: Node does not provide energy measurements
++ echo 'Warning: pos energy not available'
+Warning: pos energy not available
++ pos_upload -f -l -t 30 -o logs -r /root/logs
++ echo 'Server terminating...'
++ rm -r /root/www
++ rm -r /root/certs
++ rm -r /root/logs
